@@ -1,0 +1,23 @@
+{
+  "name": "360zhijia",
+  "version": "1.0.0",
+  "description": "360之家爬虫",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha -t 0 test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/riichg5/360zhijia.git"
+  },
+  "keywords": [
+    "360之家",
+    "爬虫"
+  ],
+  "author": "李波",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/riichg5/360zhijia/issues"
+  },
+  "homepage": "https://github.com/riichg5/360zhijia#readme"
+}
