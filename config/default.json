@@ -1,0 +1,34 @@
+{
+	"appName": "super360",
+	"logger": {
+		"level": "trace"
+	},
+	"db": {
+        "protocol" : "tcp",
+        "host" : "localhost",
+        "port" : 3306,
+        "username" : "root",
+        "password" : "123",
+        "name" : "mysql360zhijia",
+        "pool" : {
+            "min" : 1,
+            "max" : 50
+        },
+        "sequelize" : {
+            "dialect" : "mysql",
+            "omitNull" : false,
+            "maxConcurrentQueries" : 100,
+            "pool" : {
+                "maxConnection" : 50,
+                "max" : 50
+            },
+            "define" : {
+                "syncOnAssociation" : false,
+                "underscored" : true
+            }
+        }
+	},
+	"kue": {
+		"port": 3002
+	}
+}
