@@ -1,5 +1,5 @@
 
-global.CONST = _.extend([
+global.CONST = _.extend(
     require('./common'),
-    require('./sequelize'),
-]);
+    require('./sequelize')
+);

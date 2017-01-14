@@ -28,7 +28,19 @@
             }
         }
 	},
+    "redis": {
+        "port": 6379,
+        "host": "localhost",
+        "auth": "",
+        "db": 0,
+        "options": {
+                // see https://github.com/mranney/node_redis#rediscreateclient
+        }
+    },
 	"kue": {
-		"port": 3002
+        "title": "super360爬虫队列",
+		"port": 3002,
+        "prefix": "360",
+        "Concurrency": 1     //并发量
 	}
 }
