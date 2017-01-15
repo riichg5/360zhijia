@@ -42,5 +42,8 @@
 		"port": 3002,
         "prefix": "360",
         "Concurrency": 1     //并发量
-	}
+	},
+    "PicPath": "/Users/libo/ubey/super360/download",
+    "imgWebPath": "/wp-content/uploads",
+    "maxImgWidth": 600
 }

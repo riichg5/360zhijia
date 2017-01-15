@@ -4,27 +4,16 @@ let assert = require('assert');
 let DirectoryNames = [];
 
 function createBll(name, context) {
-    var companyCode = context.companyCode;
     assert(name && name.length > 0, 'name must be a non-empty string.');
     assert(typeof context === 'object', 'context must be a valid object.');
 
-    companyCode = companyCode.toLowerCase();
     if (context.bll && context.bll[name]) {
         return context.bll[name];
     }
 
     if (exports[name]) {
         var bll = null;
-        var companyCodePath = path.join(__dirname,`${companyCode}/${name}.js`);
-        if(companyCode && fs.existsSync(companyCodePath)) {
-            delete exports[name];
-            exports.__defineGetter__(name, function () {
-                return require(companyCodePath);
-            });
-            bll = new exports[name](context);
-        } else {
-            bll = new exports[name](context);
-        }
+        bll = new exports[name](context);
 
         if (!context.bll) {
             context.bll = {};
