@@ -30,6 +30,28 @@ class AnQuan extends Base {
         });
     }
 
+    //excute 方法
+    procArticle (opts) {
+        let self = this;
+        let context = self.context;
+        let uri = opts.uri;
+
+        return _co(function *() {
+            let bArticle = self.BLL.createArticle(context);
+            let articleInfo = yield self.getArticleInfo({uri: uri});
+
+            self.logger.debug("start add article to db.");
+            yield bArticle.addOne({
+                subject: articleInfo.title,
+                content: articleInfo.content,
+                uri: articleInfo.uri,
+                tagIds: [34]
+            });
+
+            return;
+        });
+    }
+
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
@@ -37,7 +59,7 @@ class AnQuan extends Base {
         let info = {
             title: "",
             content: "",
-            from: uri
+            uri: uri
         };
 
         return _co(function *(argument) {

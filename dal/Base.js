@@ -1,5 +1,4 @@
 let DAL = require('./index');
-let redisHelper = require(_base + 'lib/redisHelper');
 
 class BaseDal {
     constructor(context) {
@@ -87,23 +86,23 @@ class BaseDal {
             type: CONST.SEQUELIZE.QUERY_TYPE.SELECT
         };
 
-        if(cache && cache.key && cache.ttl) {
-            return redisHelper.pGet(context, cache.key).then(res => {
-                if(res) {
-                    return _resolve(res);
-                }
+        // if(cache && cache.key && cache.ttl) {
+        //     return redisHelper.pGet(context, cache.key).then(res => {
+        //         if(res) {
+        //             return _resolve(res);
+        //         }
 
-                return this.query(sql, queryOpts).then(res => {
-                    //asynchronous set redis
-                    if(res && res.length) {
-                        redisHelper.pSet(context, cache.key, res, cache.ttl);
-                    }
-                    return _resolve(res);
-                });
-            })
-        } else {
+        //         return this.query(sql, queryOpts).then(res => {
+        //             //asynchronous set redis
+        //             if(res && res.length) {
+        //                 redisHelper.pSet(context, cache.key, res, cache.ttl);
+        //             }
+        //             return _resolve(res);
+        //         });
+        //     })
+        // } else {
             return this.query(sql, queryOpts);
-        }
+        // }
     }
 
      /**
@@ -151,6 +150,10 @@ class BaseDal {
 
     create(...params) {
         return this.model.create.apply(this.model, params);
+    }
+
+    bulkCreate(...params) {
+        return this.model.bulkCreate.apply(this.model, params);
     }
 
     destroy(...params) {

@@ -4,35 +4,12 @@ var assert = require('assert');
 var DirectoryNames = [];
 
 function createDal(name, context) {
-    // if(!context){
-    //     context = _getContext();
-    // }
-    var companyCode = context.companyCode;
     assert(name && name.length > 0, 'name must be a non-empty string.');
     assert(typeof context === 'object', 'context must be a valid object.');
 
-    companyCode = companyCode.toLowerCase();
-    if (context.dal && context.dal[name]) {
-        return context.dal[name];
-    }
-
     if (exports[name]) {
         var dal = null;
-        var companyCodePath = path.join(__dirname,`${companyCode}/${name}.js`);
-        if(companyCode && fs.existsSync(companyCodePath)) {
-            delete exports[name];
-            exports.__defineGetter__(name, function () {
-                return require(companyCodePath);
-            });
-            dal = new exports[name](context);
-        } else {
-            dal = new exports[name](context);
-        }
-
-        if (!context.dal) {
-            context.dal = {};
-        }
-        context.dal[name] = dal;
+        dal = new exports[name](context);
         return dal;
     }
 
@@ -77,4 +54,4 @@ function loadDirectory(exports, directory) {
 }
 
 loadDirectory(exports, __dirname);
-exports.createBll = createDal;
+exports.createDal = createDal;

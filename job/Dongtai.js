@@ -7,8 +7,9 @@ class Job extends Base {
 		this.type = CONST.JOB._360动态;
 	}
 
-	createMsg (opts) {
-		return super.createMsg(opts);
+	createMsg () {
+		// return super.createMsg();
+		return _resolve();
 	}
 
 	excute (opts) {

@@ -56,10 +56,11 @@ let job = (opts) => {
         }
     });
 
-    //timmer
 
-    let j = schedule.scheduleJob('* * 0-23 * *', () => {
+    // let j = schedule.scheduleJob('* /1 0-23 * *', () => {
+        _logger.debug("start cron job");
         if(IS_PROCESSING === true) {
+            _logger.debug(`IS_PROCESSING: ${IS_PROCESSING},  exit...`);
             return;
         }
 
@@ -68,12 +69,19 @@ let job = (opts) => {
         _co(function *() {
             for(let i = 0; i < jobs.length; i ++) {
                 let job = jobs[i];
+                _logger.debug(`start job: ${job.type} `);
                 yield job.createMsg();
+                _logger.debug(`job over: ${job.type} `);
             }
-
+            return;
+        }).then(res => {
             IS_PROCESSING = false;
+            _logger.debug(`all jobs is over, set IS_PROCESSING to false`);
+            return;
+        }).catch(error => {
+            _logger.error("start job error:", error);
         });
-    });
+    // });
 };
 
 module.exports = _.extend(exportObj, {index: job});

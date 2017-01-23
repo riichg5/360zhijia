@@ -1,10 +1,14 @@
 let Promise = require('bluebird');
+let BLL = require(_base + "bll");
+let DAL = require(_base + 'dal');
 
 class Base {
 
 	constructor (context) {
 		this.context = context;
 		this.logger = context.logger;
+		this.BLL = BLL;
+		this.DAL = DAL;
 		this.type = '';
 	}
 
@@ -20,11 +24,20 @@ class Base {
 	createMsg (opts) {
 	    let self = this;
 	    let context = self.context;
-	    let data = opts.data;
+	    let data = opts.data;   //这里一般传的是uri
+	    let uri = opts.data;
 	    let priority = opts.priority || CONST.PRIORITY.NORMAL;
 
 	    return _co(function *() {
-		    _logger.debug("start create %s job", self.type);
+	    	self.logger.debug("start create message of job:", self.type);
+		    //查询是否已经处理过了
+		    let bCrawler = self.BLL.createCrawler(context);
+		    let isProcessed = yield bCrawler.isProcessed(uri);
+
+		    if(isProcessed === true) {
+		    	return;
+		    }
+
 		    let job = self.createJob({type: self.type, data: data});
 	        job.removeOnComplete(true)
 	           .priority('normal')
@@ -36,8 +49,9 @@ class Base {
 
 		    let saveJob = Promise.promisify(job.save).bind(job);
 		    yield saveJob();
-		    _logger.debug("job created, job id: %d, job data: %j", job.id, job.data);
+		    yield bCrawler.addRecord(uri);
 
+		    self.logger.debug("job created, job id: %d, job data: %j", job.id, job.data);
 		    return;
 	    });
 	}

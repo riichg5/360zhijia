@@ -45,5 +45,6 @@
 	},
     "PicPath": "/Users/libo/ubey/super360/download",
     "imgWebPath": "/wp-content/uploads",
-    "maxImgWidth": 600
+    "maxImgWidth": 600,
+    "cacheTTL": 172800
 }

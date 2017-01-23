@@ -1,0 +1,53 @@
+let Base = require('./Base');
+let cheerio = require('cheerio');
+let request = require('request-promise');
+let Promise = require('bluebird');
+
+class Crawler extends Base {
+	constructor(context) {
+		super(context);
+		this.dal = this.DAL.createCrawler(context);
+	}
+
+	isProcessed (uri) {
+		let self = this;
+		let context = self.context;
+
+	    return _co(function *() {
+		    let valOfKey = yield self.BLL.Cache.get({key: uri});
+		    if(valOfKey) {
+		    	return true;
+		    }
+
+			let record = yield self.dal.findOne({
+				where: {
+					url: uri
+				}
+			});
+
+			return record ? true : false;
+	    });
+	}
+
+	addRecord (uri) {
+		let self = this;
+		let context = self.context;
+
+		return _co(function *() {
+			let model = {
+				url: uri
+			};
+
+			yield self.dal.create(model);
+		    yield self.BLL.Cache.set({
+		    	key: uri,
+		    	value: 'ready2process',
+		    	ttl: _config.get('cacheTTL')
+		    });
+
+		    return;
+		});
+	}
+}
+
+module.exports = Crawler;

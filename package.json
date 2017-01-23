@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/riichg5/360zhijia#readme",
   "dependencies": {
+    "assert": "^1.4.1",
     "bluebird": "^3.4.7",
     "bunyan": "^1.8.5",
     "cheerio": "^0.22.0",

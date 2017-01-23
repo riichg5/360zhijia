@@ -27,7 +27,10 @@ class Cache {
 	}
 
 	static get(opts) {
+		let self = this;
 		let key = opts.key;
+
+		_logger.debug("cache key is:", key);
 		return client.getAsync(key);
 	}
 }

@@ -4,25 +4,18 @@ let assert = require('assert');
 let DirectoryNames = [];
 
 function createBll(name, context) {
+    _logger.debug("create bll:", name);
     assert(name && name.length > 0, 'name must be a non-empty string.');
     assert(typeof context === 'object', 'context must be a valid object.');
-
-    if (context.bll && context.bll[name]) {
-        return context.bll[name];
-    }
 
     if (exports[name]) {
         var bll = null;
         bll = new exports[name](context);
-
-        if (!context.bll) {
-            context.bll = {};
-        }
-        context.bll[name] = bll;
         return bll;
     }
     else {
-        console.log(`Cannot find bll: ${name}`);
+        throw _utils.createError(`Cannot find bll: ${name}`);
+        // console.log(`Cannot find bll: ${name}`);
     }
 
     console.dir(exports);
