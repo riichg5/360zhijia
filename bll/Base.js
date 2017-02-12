@@ -71,8 +71,9 @@ class Base {
 		let imgUrl = opts.imgUrl;
 		let imgInfo = self.getImageFolderName();
 		let ext = path.parse(imgUrl).ext;
-		let imageName = path.join(imgInfo.webPath, uuid.v4() + ext);
-		let imagePath = path.join(imgInfo.fullPath, uuid.v4() + ext);
+		let uuidVal = uuid.v4();
+		let imageName = path.join(imgInfo.webPath, uuidVal + ext);
+		let imagePath = path.join(imgInfo.fullPath, uuidVal + ext);
 
 		self.logger.debug("start get imgUrl:", imgUrl);
 		self.logger.debug("will be save to", imagePath);
@@ -138,12 +139,14 @@ class Base {
 				if(imagWebPath) {
 					$img.attr('src', imagWebPath);
 					$img.attr('title', name);
+					$img.attr('alt', name);
 
 					if(width > maxImgWidth) {
 						$img.removeAttr('height');
 						$img.attr("width", `${maxImgWidth}px`);
 					}
 
+					$img.wrap(cheerio('<center></center>'));
 					if(!firstImgUrl) {
 						firstImgUrl = imagWebPath;
 					}

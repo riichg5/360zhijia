@@ -7,6 +7,7 @@ class AnQuan extends Base {
 	constructor(context) {
 		super(context);
         this.uri = "http://bobao.360.cn";
+        this.tagIds = [34];
 	}
 
     //出口方法
@@ -45,7 +46,7 @@ class AnQuan extends Base {
                 subject: articleInfo.title,
                 content: articleInfo.content,
                 uri: articleInfo.uri,
-                tagIds: [34]
+                tagIds: self.tagIds
             });
 
             return;

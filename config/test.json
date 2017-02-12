@@ -2,5 +2,5 @@
 	"kue": {
 		"port": 3003
 	},
-	"UPLOAD_PIC_PATH": "/Users/libo/ubey/super360/download"
+	"PicPath": "/Users/libo/www/360zhijia/wp-content/uploads"
 }
