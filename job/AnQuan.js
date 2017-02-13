@@ -16,7 +16,7 @@ class Job extends Base {
 		let priority = CONST.PRIORITY.NORMAL;
 		// let base = super;
 
-		self.schedule.scheduleJob('*/10 * * * * *', () => {
+		self.schedule.scheduleJob('* */1 * * * *', () => {
 			if(IsProcessing === true) {
 				self.logger.debug(`job ${self.type} is running, can not run again.`);
 				return;
