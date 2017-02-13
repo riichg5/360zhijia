@@ -7,7 +7,7 @@ class AnQuan extends Base {
 	constructor(context) {
 		super(context);
         this.uri = "http://bobao.360.cn";
-        this.tagIds = [34];
+        this.tagIds = [495, 496];
 	}
 
     //出口方法
@@ -37,7 +37,7 @@ class AnQuan extends Base {
         let context = self.context;
         let uri = opts.uri;
 
-        return _co(function *() {
+        return _co(function* () {
             let bArticle = self.BLL.createArticle(context);
             let articleInfo = yield self.getArticleInfo({uri: uri});
 
@@ -45,6 +45,7 @@ class AnQuan extends Base {
             yield bArticle.addOne({
                 subject: articleInfo.title,
                 content: articleInfo.content,
+                excerpt: articleInfo.excerpt,
                 uri: articleInfo.uri,
                 tagIds: self.tagIds
             });
@@ -60,6 +61,7 @@ class AnQuan extends Base {
         let info = {
             title: "",
             content: "",
+            excerpt: "",
             uri: uri
         };
 
@@ -70,9 +72,12 @@ class AnQuan extends Base {
             info.$content = $("#article_box");
             info.$content.find("#article_box h2").eq(0).remove();
             info.$content.find(".article-msg").remove();
+            info.$content.find("hr").remove();
 
+            yield self.baseHtmlProcess({$content: info.$content});
             let replaceInfo = yield self.procContentImgs({$html: info.$content});
             info.content = replaceInfo.html;
+            info.excerpt = self.getExcerpt(info.$content.text());
 
             return info;
         });

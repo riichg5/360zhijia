@@ -163,6 +163,47 @@ class Base {
 			};
 		});
 	}
+
+	//判断是否有pre标签，添加SyntaxHighlighter
+	addSyntaxHighlighter (opts) {
+		let self = this;
+		let context = self.context;
+		let $content = opts.$content;
+		let config = _config.get("syntaxHighlighter");
+
+		if($content.has("pre")) {
+			self.logger.debug("find syntaxHighlighter pre tag.");
+			$content.append(`<link type="text/css" media="all" href="${config.css}" rel="stylesheet">`);
+			$content.append(`<script type="text/javascript" src="${config.js}"></script>`);
+			$content.append(`<script type="text/javascript">SyntaxHighlighter.all();</script>`);
+			self.logger.debug("add css and js of syntaxHighlighter");
+		}
+	}
+
+	//Base统一处理content的方法
+	baseHtmlProcess (opts) {
+		let self = this;
+		let context = self.context;
+		let $content = opts.$content;
+
+		return _co(function* () {
+			self.addSyntaxHighlighter({$content: $content});
+			yield _resolve();
+			return;
+		});
+	}
+
+	removeEmptyStr (text) {
+		text = text.replace(/^(\n\r)+/g, "");
+    	text = text.replace(/(\n\r)+$/g, "");
+    	text = text.replace(/(&nbsp;)/gi, "");
+    	text = text.replace(/^(\s)+/g, "");
+		return text;
+	}
+
+	getExcerpt (text) {
+		return this.removeEmptyStr(text).substring(0, _config.get("excerptLength"));
+	}
 }
 
 module.exports = Base;

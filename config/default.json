@@ -34,7 +34,14 @@
         "auth": "",
         "db": 0,
         "options": {
-                // see https://github.com/mranney/node_redis#rediscreateclient
+        }
+    },
+    "cacheRedis": {
+        "port": 6379,
+        "host": "localhost",
+        "auth": "",
+        "options": {
+            "db": 1
         }
     },
 	"kue": {
@@ -46,5 +53,10 @@
     "PicPath": "/Users/libo/ubey/super360/download",
     "imgWebPath": "/wp-content/uploads",
     "maxImgWidth": 600,
-    "cacheTTL": 172800
+    "cacheTTL": 172800,
+    "excerptLength": 200,
+    "syntaxHighlighter": {
+        "css": "/wp-content/themes/super360/shCoreDefault.css",
+        "js": "/wp-content/themes/super360/shCore.js"
+    }
 }

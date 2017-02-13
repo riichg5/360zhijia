@@ -1,15 +1,17 @@
 let Promise = require('bluebird');
+let schedule = require('node-schedule');
 let BLL = require(_base + "bll");
 let DAL = require(_base + 'dal');
 
 class Base {
-
 	constructor (context) {
 		this.context = context;
 		this.logger = context.logger;
 		this.BLL = BLL;
 		this.DAL = DAL;
+		this.schedule = schedule;
 		this.type = '';
+		this.priority = "normal";
 	}
 
 	createJob (opts) {
@@ -38,14 +40,15 @@ class Base {
 		    	return;
 		    }
 
-		    let job = self.createJob({type: self.type, data: data});
-	        job.removeOnComplete(true)
-	           .priority('normal')
-	           .attempts(100)
-	           .backoff(function(attempts, delay){
-	           		return attempts * 1000 * 60 * 15;  //add 15 minutes
-	            })
-	           .ttl(15 * 1000);
+		    let job = self.createJob({type: self.type, data: {title: uri, uri: uri}});
+
+		    job.removeOnComplete(true)
+           	.priority(self.priority)
+           	.attempts(20)
+           	.backoff(function(attempts, delay){
+           		return attempts * 1000 * 60 * 15;  //add 15 minutes
+            })
+           	.ttl(15 * 1000);
 
 		    let saveJob = Promise.promisify(job.save).bind(job);
 		    yield saveJob();

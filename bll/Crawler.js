@@ -14,7 +14,9 @@ class Crawler extends Base {
 		let context = self.context;
 
 	    return _co(function *() {
-		    let valOfKey = yield self.BLL.Cache.get({key: uri});
+	    	let redisKey = `super360_${uri}`;
+		    let valOfKey = yield self.BLL.Cache.get({key: redisKey});
+		    self.logger.debug("Key in redis:", valOfKey);
 		    if(valOfKey) {
 		    	return true;
 		    }
@@ -40,7 +42,7 @@ class Crawler extends Base {
 
 			yield self.dal.create(model);
 		    yield self.BLL.Cache.set({
-		    	key: uri,
+		    	key: `super360_${uri}`,
 		    	value: 'ready2process',
 		    	ttl: _config.get('cacheTTL')
 		    });

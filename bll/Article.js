@@ -13,6 +13,7 @@ class Article extends Base {
 		let context = self.context;
 		let subject = opts.subject;
 		let content = opts.content;
+		let excerpt = opts.excerpt;
 		let tagIds = opts.tagIds;
 		let uri = opts.uri;
 
@@ -34,7 +35,7 @@ class Article extends Base {
 				post_name: moment().format("YYYYMMDDhhmmss"),
 				post_parent: '0',
 				post_type: 'post',
-				post_excerpt: '',
+				post_excerpt: excerpt,
 				to_ping: '',
 				pinged: '',
 				post_content_filtered: '',

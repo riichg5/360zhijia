@@ -5,7 +5,7 @@ let moment = require('moment');
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
 
-let redisConfig = _config.get("redis");
+let redisConfig = _config.get("cacheRedis");
 let client = redis.createClient(redisConfig.port, redisConfig.host, redisConfig.options);
 
 class Cache {
@@ -14,7 +14,7 @@ class Cache {
 		let value = opts.value || moment().format('YYYY-MM-DD HH:mm:ss');
 		let ttl = opts.ttl;
 
-	    _logger.trace("Storing to redis for key '%s'.", key);
+	    _logger.debug("Storing to redis for key '%s'.", key);
 
 	    return _co(function *() {
 	    	let result = yield client.setAsync(key, value);

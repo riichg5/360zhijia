@@ -25,8 +25,8 @@ let queue = kue.createQueue({
 context.queue = queue;
 context.logger = _logger;
 
-// 初始化kue job
-require(_base + 'job').index({context: context});
+//初始化kue job
+// require(_base + 'job').index({context: context});
 
 
 module.exports = {

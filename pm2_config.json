@@ -1,0 +1,15 @@
+{
+    "name": "super360",
+    "script": "./index.js",
+    "kill_timeout" : 8000,
+    "args": [],
+    "instances": 1,
+    "exec_mode": "fork",
+    "merge_logs": true,
+    "run_as_user": "riich",
+    "error_file": "/var/log/super360/error.log",
+    "out_file": "/var/log/super360/out.log",
+    "env": {
+        "NODE_ENV": "production"
+    }
+}
