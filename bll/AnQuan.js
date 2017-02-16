@@ -8,6 +8,7 @@ class AnQuan extends Base {
 		super(context);
         this.uri = "http://bobao.360.cn";
         this.tagIds = [495, 496];
+        this.categoryId = 495;
 	}
 
     //出口方法
@@ -42,7 +43,7 @@ class AnQuan extends Base {
             let articleInfo = yield self.getArticleInfo({uri: uri});
 
             self.logger.debug("start add article to db.");
-            yield bArticle.addOne({
+            let postArticle = yield bArticle.addOne({
                 subject: articleInfo.title,
                 content: articleInfo.content,
                 excerpt: articleInfo.excerpt,
@@ -50,6 +51,7 @@ class AnQuan extends Base {
                 tagIds: self.tagIds
             });
 
+            yield self.pushUri({postId: postArticle.id});
             return;
         });
     }

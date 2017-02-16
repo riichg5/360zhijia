@@ -204,6 +204,34 @@ class Base {
 	getExcerpt (text) {
 		return this.removeEmptyStr(text).substring(0, _config.get("excerptLength"));
 	}
+
+	getPageUri (opts) {
+		let siteUrl = _config.get("siteUrl");
+		let categoryName = opts.categoryName;
+		let postId = opts.postId;
+
+		return `${siteUrl}${categoryName}/${postId}.html`;
+	}
+
+	pushUri (opts) {
+		let self = this;
+		let context = self.context;
+		let postId = opts.postId;
+
+		return _co(function* () {
+	        //push
+	        let bPush = self.BLL.createPush(context);
+	        let dWp360Term = self.DAL.createWp360Term(context);
+	        let categoryName = yield dWp360Term.getCategoryName(self.categoryId);
+
+	        if(!categoryName) {
+	            return yield _reject("can not get category.");
+	        }
+	        let pageUrl = self.getPageUri({postId: postId, categoryName: categoryName});
+
+	        yield bPush.pushToAll({uri: pageUrl});
+		});
+	}
 }
 
 module.exports = Base;

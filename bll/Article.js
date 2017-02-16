@@ -61,7 +61,8 @@ class Article extends Base {
 				});
 			});
 			yield dWp360TermRelationship.bulkCreate(models);
-			return;
+
+			return post;
 		});
 	}
 }

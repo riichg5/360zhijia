@@ -1,5 +1,6 @@
 {
 	"appName": "super360",
+    "siteUrl": "http://localhost/",
 	"logger": {
 		"level": "trace"
 	},
@@ -55,6 +56,9 @@
     "maxImgWidth": 600,
     "cacheTTL": 172800,
     "excerptLength": 200,
+    "push": {
+        "baidu": "http://www.baidu.com"
+    },
     "syntaxHighlighter": {
         "css": "/wp-content/themes/super360/shCoreDefault.css",
         "js": "/wp-content/themes/super360/shCore.js"

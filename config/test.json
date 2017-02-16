@@ -1,6 +1,10 @@
 {
+	"siteUrl": "http://www.360zhijia.com/",
 	"kue": {
 		"port": 3003
 	},
-	"PicPath": "/Users/libo/www/360zhijia/wp-content/uploads"
+	"PicPath": "/Users/libo/www/360zhijia/wp-content/uploads",
+    "push": {
+        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=FiSWUUVP52elUAoP"
+    }
 }
