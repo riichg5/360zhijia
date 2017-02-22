@@ -1,7 +1,7 @@
 //360动态
-let Base = require('./Base');
+let BBS = require('./BBS');
 
-class Job extends Base {
+class Job extends BBS {
 	constructor (context) {
 		super(context);
 		this.type = CONST.JOB._360动态;

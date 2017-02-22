@@ -3,6 +3,7 @@ let path = require('path');
 let schedule = require('node-schedule');
 let exportObj = {};
 let jobs = [];
+let exceptFileNames = ["index.js", "Base.js"];
 
 let job = (opts) => {
 	let context = opts.context;
@@ -24,7 +25,7 @@ let job = (opts) => {
         }
 
         match = /(\w+)\.js$/.exec(filename);
-        if (match && filename !== 'Base.js') {
+        if (match && exceptFileNames.indexOf(filename) === -1) {
             try{
             	console.log("job filename: ", filename);
             	console.log("fullPath: ", fullPath);

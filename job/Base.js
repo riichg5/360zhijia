@@ -27,10 +27,11 @@ class Base {
 	    let self = this;
 	    let context = self.context;
 	    let data = opts.data;   //这里一般传的是uri
-	    let uri = opts.data;
+	    let title = data.title;
+	    let uri = data.uri;
 	    let priority = opts.priority || CONST.PRIORITY.NORMAL;
 
-	    return _co(function *() {
+	    return _co(function* () {
 	    	self.logger.debug("start create message of job:", self.type);
 		    //查询是否已经处理过了
 		    let bCrawler = self.BLL.createCrawler(context);
@@ -40,7 +41,7 @@ class Base {
 		    	return;
 		    }
 
-		    let job = self.createJob({type: self.type, data: {title: uri, uri: uri}});
+		    let job = self.createJob({type: self.type, data: data});
 
 		    job.removeOnComplete(true)
            	.priority(self.priority)

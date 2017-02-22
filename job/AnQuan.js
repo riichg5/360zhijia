@@ -5,16 +5,15 @@ let IsProcessing = false;
 class Job extends Base {
 	constructor(context) {
 		super(context);
-		this.superObj = new Base(context);
-		this.superObj.type = this.type = CONST.JOB._360安全客;
-		this.priority = "normal";
+		this.type = CONST.JOB._360安全客;
+		this.priority = CONST.PRIORITY.NORMAL;
 	}
 
 	createMsg () {
 		let self = this;
 		let context = self.context;
-		let priority = CONST.PRIORITY.NORMAL;
-		// let base = super;
+		let priority = self.priority;
+		let superCreateMsg = super.createMsg.bind(self);
 
 		self.schedule.scheduleJob('*/5 * * * *', () => {
 			if(IsProcessing === true) {
@@ -33,9 +32,12 @@ class Job extends Base {
 				self.logger.debug("end of getArticleList");
 				for(let uri of uris) {
 					self.logger.debug("uri: ", uri);
-					yield self.superObj.createMsg({
+					yield superCreateMsg({
 						priority: priority,
-						data: uri
+						data: {
+							title: self.type,
+							uri: uri
+						}
 					});
 				}
 				return;
