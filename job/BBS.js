@@ -31,20 +31,34 @@ class BBS extends Base {
 
 				return _co(function* () {
 					let bBBS = self.BLL.createBBS({context: context, config: item});
-					let uris = yield bBBS.getArticleList();
+					yield bBBS.begin({
+						createMsgFunc: function* (opts) {
+							yield superCreateMsg({
+								priority: opts.priority,
+								data: {
+									title: `${self.type}:${opts.name}`,
+									uri: opts.uri,
+									needReply: opts.needReply
+								}
+							});
+							return;
+						}
+					});
 
-					self.logger.debug("end of getArticleList");
-					for(let uri of uris) {
-						self.logger.debug("uri: ", uri);
-						yield superCreateMsg({
-							priority: item.priority,
-							data: {
-								title: `${self.type}:${item.name}`,
-								uri: item.uri,
-								needReply: item.needReply
-							}
-						});
-					}
+					// let uris = yield bBBS.getArticleList();
+					//
+					// self.logger.debug("end of getArticleList");
+					// for(let uri of uris) {
+					// 	self.logger.debug("uri: ", uri);
+					// 	yield superCreateMsg({
+					// 		priority: item.priority,
+					// 		data: {
+					// 			title: `${self.type}:${item.name}`,
+					// 			uri: item.uri,
+					// 			needReply: item.needReply
+					// 		}
+					// 	});
+					// }
 					return;
 				}).then(res => {
 					let endTime = new Date().getTime();
@@ -66,7 +80,14 @@ class BBS extends Base {
 		let job = opts.job;
 
 		return _co(function* () {
-			self.logger.debug("start excute job data: ", job.data);
+			let data = job.data;
+			let uri = data.uri;
+			let needReply = data.needReply;
+			let bBBS = self.BLL.createBBS(context);
+
+			self.logger.debug("start excute job, data is: ", uri);
+
+			yield bBBS.procArticle({uri: uri, needReply: needReply});
 			return;
 		});
 	}

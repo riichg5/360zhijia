@@ -1,5 +1,17 @@
 [
 	{
+		"name": "360儿童卫士",
+		"uri": "http://bbs.360.cn/forum-7005-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "*/5 * * * *",
+		"tagIds": [34],
+		"categoryId": 34,
+		"topImg": "",
+		"deepPageCount": 5,
+		"keyWords": ["360", "儿童卫士"]
+	},
+	{
 		"name": "360云盘",
 		"uri": "http://bbs.360.cn/forum-126-1.html",
 		"needReply": true,
@@ -7,7 +19,9 @@
 		"cron": "*/5 * * * *",
 		"tagIds": [34],
 		"categoryId": 34,
-		"topImg": ""
+		"topImg": "",
+		"deepPageCount": 5,
+		"keyWords": ["360", "云盘"]
 	},
 	{
 		"name": "360手机N5",
@@ -17,6 +31,8 @@
 		"cron": "*/5 * * * *",
 		"tagIds": [34],
 		"categoryId": 34,
-		"topImg": ""
+		"topImg": "",
+		"deepPageCount": 5,
+		"keyWords": ["360", "n5"]
 	}
 ]
