@@ -67,7 +67,7 @@ class BBS extends Base {
 
         return _co(function* () {
             let bArticle = self.BLL.createArticle(context);
-            let articleInfo = yield self.getArticleInfo({uri: uri});
+            let articleInfo = yield self.getArticleInfo({threadUri: uri});
 
             self.logger.debug("start add article to db.");
             let postArticle = yield bArticle.addOne({
@@ -110,18 +110,24 @@ class BBS extends Base {
         return title;
     }
 
-    getThreadSubject (opts) {
-        let $ = opts.$;
+    getConfigByThreadTitle (opts) {
         let threadTitle = opts.threadTitle;
-        let subject = $('#thread_subject').text() || "";
         let config = _.find(configs, config => {
             return config.name === threadTitle;
         });
 
         if(!config) {
-            throw new Error("can't find config in bbsUris.json.");
+            throw new Error(`can't find config in bbsUris.json by threadTitle: ${threadTitle}.`);
         }
+        return config;
+    }
 
+    getThreadSubject (opts) {
+        let self = this;
+        let $ = opts.$;
+        let threadTitle = opts.threadTitle;
+        let subject = $('#thread_subject').text() || "";
+        let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
         let keyWords = config.keyWords || [];
         let isContains = false;
         let lowercase = subject.toLowerCase();
@@ -244,40 +250,138 @@ class BBS extends Base {
         return splits.join('-');
     }
 
+    getPostDivs (opts) {
+        let $ = opts.$;
+        return $("#postlist").children("div[id*=post_]");
+    }
+
+
+  // #获得回复的html内容
+  // get_post_content: ($post, index, cb) ->
+  //   self = @
+  //   self.remove_excess $post
+  //   $first_tr = $post.find('table').eq(0).find("tr:first")
+  //   return cb('failed') unless $first_tr
+  //   $second_td = $first_tr.find('.plc').eq(0)
+  //   return cb('failed') unless $second_td
+  //   $second_div = $second_td.children('div[class=pct]').eq(0)
+  //   return cb('failed') unless $second_div
+  //   is_worker_reply = self.is_worker_reply($post)
+  //   console.log("is_worker_reply:", is_worker_reply)
+  //   self.mark_imgs($second_div)
+  //   attrs =
+  //     content: $second_div.text()
+  //     color: null
+  //     block: "[[content]]"
+  //   if self.is_first_page() and index is 0
+  //       unless self.keys.IS_NEWS
+  //         attrs.color = GREEN_360
+  //         self.quote_content_format attrs, cb
+  //       else
+  //         attrs.block = "[[content]]"
+  //         self.quote_content_format attrs, cb
+  //   else if is_worker_reply
+  //     attrs.color = RED_COLOR
+  //     attrs.block = "[[content]]"
+  //     self.quote_content_format attrs, cb
+  //   else
+  //     attrs.block = "[[content]]"
+  //     self.quote_content_format attrs, cb
+
+    getPostContent (opts) {
+        let self = this;
+        let context = self.context;
+        let $div = opts.$div;
+        let divIndex = opts.divIndex;
+        let threadPageNum = opts.threadPageNum;
+
+
+    }
+
     getThreadContent (opts) {
         let self = this;
         let context = self.context;
+        let threadPageNum = self.threadPageNum;
+        let needReply = opts.needReply;
+        let $ = opts.page$;
+        let postDivs = self.getPostDivs({$: $});
 
+        return _co(function* () {
+            self.logger.debug(`current page reply amount is: ${postDivs.length}`);
+            if(postDivs.length) {
+                throw _utils.createError("Can not find post divs.");
+            }
+
+            let maxPostNum = needReply ? postDivs.length : 1;
+            let divContents = [];
+            for(var i=0; i<maxPostNum; i++) {
+                let content = yield self.getPostContent({
+                    $div: postDivs.eq(i),
+                    divIndex: i,
+                    threadPageNum: threadPageNum
+                });
+                divContents.push(content);
+            }
+        });
     }
 
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
-        let uri = opts.uri;
+        let threadUri = opts.threadUri;
         let info = {
             title: "",
             content: "",
             excerpt: "",
-            uri: uri
+            uri: threadUri
         };
 
         return _co(function* (argument) {
-            let $ = yield self.loadUri({uri: uri});
+            let $ = yield self.loadUri({uri: threadUri});
             let threadTitle = self.getThreadTitle($);
+            let threadPageCount = self.getThreadMaxPageCount($);
+            let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
 
             info.title = self.getThreadSubject({
                 $: $,
                 threadTitle: threadTitle
             });
-            info.$content = $("#article_box");
-            info.$content.find("#article_box h2").eq(0).remove();
-            info.$content.find(".article-msg").remove();
-            info.$content.find("hr").remove();
 
-            yield self.baseHtmlProcess({$content: info.$content});
-            let replaceInfo = yield self.procContentImgs({$html: info.$content});
-            info.content = replaceInfo.html;
-            info.excerpt = self.getExcerpt(info.$content.text());
+            //不需要回复，则只爬第一页
+            if(!config.needReply) {
+                threadPageCount = 1;
+            }
+
+            let content = [];
+            for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
+                let pageCheerio = $;
+
+                if(pageNum !== 1) {
+                    let pageUri = self.getThreadPageUrl({
+                        pageUrl: threadUri,
+                        pageNum: pageNum
+                    });
+                    pageCheerio = self.loadUri({uri: pageUri});
+                } else {
+                    pageCheerio = $;
+                }
+
+                let childPageContent = yield self.getThreadContent({
+                    page$: pageCheerio,
+                    needReply: config.needReply,
+                    threadPageNum: pageNum
+                });
+            }
+
+            // info.$content = $("#article_box");
+            // info.$content.find("#article_box h2").eq(0).remove();
+            // info.$content.find(".article-msg").remove();
+            // info.$content.find("hr").remove();
+
+            // yield self.baseHtmlProcess({$content: info.$content});
+            // let replaceInfo = yield self.procContentImgs({$html: info.$content});
+            // info.content = replaceInfo.html;
+            // info.excerpt = self.getExcerpt(info.$content.text());
 
             return info;
         });
