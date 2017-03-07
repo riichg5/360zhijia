@@ -255,12 +255,143 @@ class BBS extends Base {
         return $("#postlist").children("div[id*=post_]");
     }
 
+    //保留strong标签内容
+    retainStrong ($div) {
+        let $strongs = $div.find('strong');
+
+        if($strongs.length > 0) {
+            for (let i = 0; i<$strongs.length; i++) {
+                let $ele = $strongs.eq(i);
+
+                cheerio.load("<div>[strong]</div>").insertBefore($ele);
+                cheerio.load("<div>[/strong]</div>").insertBefore($ele);
+            }
+        }
+    }
+
+    retainCenterFont ($div)  {
+        let $centerFonts = $div.find("div[align='center']");
+
+        for(var i=0; i<$centerFonts.length; i++) {
+            if($centerFonts.eq(i).children('font').length === 1) {
+                cheerio.load("<div>[center]</div>").insertBefore($centerFonts.eq(i));
+                cheerio.load("<div>[/center]</div>").insertBefore($centerFonts.eq(i));
+            }
+        }
+    }
+
+    removeExcess ($div) {
+        let self = this;
+        self.retainCenterFont($div);
+        self.retainStrong($div);
+        $div.find(".pstatus").remove();
+        $div.find('.quote').remove();   //去掉引用显示
+        $div.find('.authi').remove();   //除去发表时间
+        $div.find('style').remove();    //删除样式代码
+        $div.find('script').remove();    //删除样式代码
+        $div.find("div[class='ptg mbm']").remove();  //删除关键字
+        $div.find('#k_favorite').remove();  //删除收藏
+        $div.find('#sh_sina_thread').remove();  //删除分享
+        $div.find('#recommend_add').remove();   //删除支持
+        $div.find('#recommend_subtract').remove();  //删除反对
+        $div.find('.plc .plm').remove();  //删除相关帖子
+        $div.find('.shareBox').remove();  //删除分享
+        $div.find("div[id^=aimg_]").remove();   //删除上传图片下载提示层
+        $div.find("div[id^=comment_]").remove();    //删除点评
+        $div.find("a[class=xw1]").remove();     //删除用户帖子上传图片说明
+        $div.find("em[class=xg1]").remove();    //删除用户帖子上传图片说明
+        $div.find("div[class=tip_c]").remove(); //删除用户帖子上传图片说明
+        $div.find("div[class='tip tip_4 aimg_tip'][disautofocus='true']").remove(); //删除智能社区图片下面的下载和上传信息
+        $div.find("div[class='modact']").remove();  //删除智能社区添加图章的内容
+        $div.find("div[class='article-functions']").remove(); //删除结尾回复 评论 点赞等
+        $div.find("div[class='po phoneversion']").remove(); //删除来之XXX版本手机终端
+        $div.find("dl[class='rate']").remove();  //删除首帖下面的评分信息
+    }
+
+    isWorkerReply (opts) {
+        let self = this;
+        let context = self.context;
+        let $div = opts.$div;
+
+        let content = $div.find("font").html();
+        self.logger.debug(`content: ${content}`);
+        let indexOf = ['产品答疑师', '工作人员', '社区管家', '实习版主', '版主'].indexOf(content);
+        self.logger.debug(`['产品答疑师', '工作人员', '社区管家', '实习版主', '版主'] indexOf is: ${indexOf}`);
+
+        return indexOf > -1;
+    }
+
+  quote_content_format: (attrs, cb) ->
+    self = @
+    content = attrs.content
+    color = attrs.color
+    block = attrs.block
+    self.content_format content, color, (err, content) ->
+      return cb(err) if err
+      if self.$(content).text().trim() isnt ""
+        content = block.replace("[[content]]", content)
+      else
+        content = ""
+      return cb(null, content)
+
+    getPostContent (opts) {
+        let self = this;
+        let context = self.context;
+        let $div = opts.$div;
+        let divIndex = opts.divIndex;
+        let threadPageNum = opts.threadPageNum;
+
+        return _co(function* () {
+            self.removeExcess($div);
+            let $firstTr = $div.find('table').eq(0).find("tr:first");
+            if(!$firstTr) {
+                throw new Error("can not find $firstTr");
+            }
+
+            let $secondTd = $firstTr.find('.plc').eq(0);
+            if(!$secondTd) {
+                throw new Error("can not find $secondTd");
+            }
+
+            let $secondDiv = $secondTd.children('div[class=pct]').eq(0);
+            if(!$secondDiv) {
+                throw new Error("can not find $secondDiv");
+            }
+
+            let isWorkerReply = self.isWorkerReply({$div: $div});
+            self.logger.debug(`is_worker_reply: ${isWorkerReply}`);
+
+            yield self.procContentImgs({$html: $div});
+
+
+        });
+
+      //   attrs =
+      //     content: $second_div.text()
+      //     color: null
+      //     block: "[[content]]"
+      //   if self.is_first_page() and index is 0
+      //       unless self.keys.IS_NEWS
+      //         attrs.color = GREEN_360
+      //         self.quote_content_format attrs, cb
+      //       else
+      //         attrs.block = "[[content]]"
+      //         self.quote_content_format attrs, cb
+      //   else if is_worker_reply
+      //     attrs.color = RED_COLOR
+      //     attrs.block = "[[content]]"
+      //     self.quote_content_format attrs, cb
+      //   else
+      //     attrs.block = "[[content]]"
+      //     self.quote_content_format attrs, cb
+    }
 
   // #获得回复的html内容
   // get_post_content: ($post, index, cb) ->
   //   self = @
   //   self.remove_excess $post
   //   $first_tr = $post.find('table').eq(0).find("tr:first")
+
   //   return cb('failed') unless $first_tr
   //   $second_td = $first_tr.find('.plc').eq(0)
   //   return cb('failed') unless $second_td
@@ -288,15 +419,6 @@ class BBS extends Base {
   //     attrs.block = "[[content]]"
   //     self.quote_content_format attrs, cb
 
-    getPostContent (opts) {
-        let self = this;
-        let context = self.context;
-        let $div = opts.$div;
-        let divIndex = opts.divIndex;
-        let threadPageNum = opts.threadPageNum;
-
-
-    }
 
     getThreadContent (opts) {
         let self = this;

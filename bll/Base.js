@@ -78,7 +78,7 @@ class Base {
 		self.logger.debug("start get imgUrl:", imgUrl);
 		self.logger.debug("will be save to", imagePath);
 
-		return _co(function *() {
+		return _co(function* () {
 			let pMkdirp = Promise.promisify(mkdirp).bind(mkdirp);
 			yield pMkdirp(imgInfo.fullPath);
 
