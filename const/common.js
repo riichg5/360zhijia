@@ -7,6 +7,7 @@ module.exports = {
 
 	PRIORITY: {
 		NORMAL: 'normal'
-	}
+	},
 
+	WORDS: ['共产党', '政府', '法轮功', '学潮', '腐败', '习近平', '江泽民', '政变', '性交', '做爱', '艹', 'fuck']
 };

@@ -5,6 +5,9 @@ let Promise = require('bluebird');
 let url = require('url');
 let configs = require(_base + 'config/bbsUris.json');
 
+const RED_COLOR = "#ff0000";
+const GREEN_360 = "#008000";
+
 class BBS extends Base {
 	constructor(opts) {
         let context = opts.context;
@@ -321,18 +324,75 @@ class BBS extends Base {
         return indexOf > -1;
     }
 
-  quote_content_format: (attrs, cb) ->
-    self = @
-    content = attrs.content
-    color = attrs.color
-    block = attrs.block
-    self.content_format content, color, (err, content) ->
-      return cb(err) if err
-      if self.$(content).text().trim() isnt ""
-        content = block.replace("[[content]]", content)
-      else
-        content = ""
-      return cb(null, content)
+    quoteContentFormat (opts) {
+        let self = this;
+        let content = attrs.content;
+        let color = attrs.color;
+        let block = attrs.block;
+
+
+    }
+
+    getColorP (color) {
+        if(color) {
+            return "<p style='color:#{color};'>";
+        }
+        return "<p>";
+    }
+
+    recoverStrong (text) {
+        if(text && text.length > 0) {
+            text = text.replace(/\[strong\]/gi, '</p><p><strong>');
+            text = text.replace(/\[\/strong\]/gi, '</strong></p><p>');
+        }
+
+        return text;
+    }
+
+    recoverCenterFont (text) {
+        if(text && text.length > 0) {
+            text = text.replace(/\[center\]/gi, "<div align='center'>");
+            text = text.replace(/\[\/center\]/gi, '</div>');
+        }
+
+        return text;
+    }
+
+    //将文本里面的url链接转换为html a标签
+    convertTextToLink (text) {
+        text.replace(
+            /((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi,
+            "<a href='$1' target='_blank'>$1</a>"
+        );
+        return text;
+    }
+
+    contentFormat (opts) {
+        let self = this;
+        let content = opts.content;
+        let color = opts.color;
+        let pHtml = self.getColorP(color);
+
+        content = content.trim();
+        content = content.replace(/^(\n)+/g, "");
+        content = content.replace(/(\n)+$/g, "");
+        content = pHtml + content + "</p>";
+        content = content.replace(/(\n)+/g, "</p>#{pHtml}");
+        content = content.replace(/(&nbsp;)/gi, "");
+        content = self.recoverStrong(content);
+        content = self.recoverCenterFont(content);
+        content = self.replacePhoneNumber(content);
+        content = self.replaceWords(content);
+        content = self.convert_text_to_link(content);
+        content = self.convertTextToLink(content);
+        content = content.replace(/<p>\s+/gi, "<p>");        //删除段落前空白字符
+        content = content.replace(/<p>\s+<\/p>/gi, "");      //删除空行
+        content = content.replace(/<p>\s*<\/p>/gi, "");      //删除空行
+        content = content.replace(/<p><\/p>/gi, "");         //删除空行
+        content = content.replace(/<p>&nbsp;<\/p>/gi, "");   //删除空行
+
+        return content;
+    }
 
     getPostContent (opts) {
         let self = this;
@@ -362,63 +422,30 @@ class BBS extends Base {
             self.logger.debug(`is_worker_reply: ${isWorkerReply}`);
 
             yield self.procContentImgs({$html: $div});
+            let attrs = {
+                content: $secondDiv.text(),
+                color: null,
+                block: "[[content]]"
+            };
 
-
+            if(threadPageNum === 1 && divIndex === 0) {
+                if(self.needReply) {
+                    attrs.color = GREEN_360;
+                    return self.quoteContentFormat(attrs);
+                } else {
+                    attrs.block = "[[content]]";
+                    return self.quoteContentFormat(attrs);
+                }
+            } else if(isWorkerReply) {
+                attrs.color = RED_COLOR;
+                attrs.block = "[[content]]";
+                return self.quoteContentFormat(attrs);
+            } else {
+                attrs.block = "[[content]]";
+                return self.quoteContentFormat(attrs);
+            }
         });
-
-      //   attrs =
-      //     content: $second_div.text()
-      //     color: null
-      //     block: "[[content]]"
-      //   if self.is_first_page() and index is 0
-      //       unless self.keys.IS_NEWS
-      //         attrs.color = GREEN_360
-      //         self.quote_content_format attrs, cb
-      //       else
-      //         attrs.block = "[[content]]"
-      //         self.quote_content_format attrs, cb
-      //   else if is_worker_reply
-      //     attrs.color = RED_COLOR
-      //     attrs.block = "[[content]]"
-      //     self.quote_content_format attrs, cb
-      //   else
-      //     attrs.block = "[[content]]"
-      //     self.quote_content_format attrs, cb
     }
-
-  // #获得回复的html内容
-  // get_post_content: ($post, index, cb) ->
-  //   self = @
-  //   self.remove_excess $post
-  //   $first_tr = $post.find('table').eq(0).find("tr:first")
-
-  //   return cb('failed') unless $first_tr
-  //   $second_td = $first_tr.find('.plc').eq(0)
-  //   return cb('failed') unless $second_td
-  //   $second_div = $second_td.children('div[class=pct]').eq(0)
-  //   return cb('failed') unless $second_div
-  //   is_worker_reply = self.is_worker_reply($post)
-  //   console.log("is_worker_reply:", is_worker_reply)
-  //   self.mark_imgs($second_div)
-  //   attrs =
-  //     content: $second_div.text()
-  //     color: null
-  //     block: "[[content]]"
-  //   if self.is_first_page() and index is 0
-  //       unless self.keys.IS_NEWS
-  //         attrs.color = GREEN_360
-  //         self.quote_content_format attrs, cb
-  //       else
-  //         attrs.block = "[[content]]"
-  //         self.quote_content_format attrs, cb
-  //   else if is_worker_reply
-  //     attrs.color = RED_COLOR
-  //     attrs.block = "[[content]]"
-  //     self.quote_content_format attrs, cb
-  //   else
-  //     attrs.block = "[[content]]"
-  //     self.quote_content_format attrs, cb
-
 
     getThreadContent (opts) {
         let self = this;
@@ -445,6 +472,34 @@ class BBS extends Base {
                 divContents.push(content);
             }
         });
+    }
+
+    getCommonPageHtml (pageContents) {
+        let self = this;
+        let content = "";
+        let applyAmount = 0;
+        let firstContent = '';
+        let replyAmountContent = '';
+        let replyContent = '';
+
+        for(let pageNum=1; pageNum<=pageContents.pageAmount; pageNum++) {
+            for(let contentNum=1; contentNum<=pageContents[i].length; contentNum++) {
+                let pageContentIndex = contentNum - 1;
+                self.logger.debug(`page_content_index: ${pageContentIndex} content_num: ${contentNum}`);
+                if(pageNum === 1 && contentNum === 1) {
+                    firstContent += '<p>' + pageContents[pageNum][pageContentIndex] + '</p>';
+                } else if(pageNum === 1 && contentNum === 2) {
+                    applyAmount += 1;
+                    replyAmountContent = `<p>&nbsp;</p><p><strong>共有[[replyAmound]]个回复供您参考:</strong></p>`;
+                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复#{applyAmount}:#{pageContents[pageNum][pageContentIndex]}</p>`;
+                } else {
+                    applyAmount += 1;
+                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复#{applyAmount}:#{pageContents[pageNum][pageContentIndex]}</p>`;
+                }
+            }
+        }
+
+        return [firstContent, replyAmountContent.replace('[[replyAmound]]', applyAmount), replyContent].join('');
     }
 
     getArticleInfo (opts) {
@@ -474,7 +529,10 @@ class BBS extends Base {
                 threadPageCount = 1;
             }
 
-            let content = [];
+            let content = {
+                threadPageCount: threadPageCount
+            };
+
             for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
                 let pageCheerio = $;
 
@@ -488,13 +546,16 @@ class BBS extends Base {
                     pageCheerio = $;
                 }
 
-                let childPageContent = yield self.getThreadContent({
+                let childPageDivContents = yield self.getThreadContent({
                     page$: pageCheerio,
                     needReply: config.needReply,
                     threadPageNum: pageNum
                 });
+
+                content[pageNum] = childPageDivContents;
             }
 
+            let postsContent =
             // info.$content = $("#article_box");
             // info.$content.find("#article_box h2").eq(0).remove();
             // info.$content.find(".article-msg").remove();

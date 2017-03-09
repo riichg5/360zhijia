@@ -51,6 +51,19 @@ class Base {
         });
 	}
 
+  	replacePhoneNumber (content) {
+	    content = content.replace(/1(\d{2})\d{4}(\d{4})/g, "1$1****$2");
+	    return content;
+  	}
+
+  	replaceWords (content) {
+	    CONST.WORDS.forEach(word => {
+			content = content.replace(new RegExp(word, "gi"), "**", "gi");
+	    });
+
+	    return content;
+  	}
+
 	getImageFolderName () {
 		let self = this;
 		let dateStr = moment().format('YYYY/MM/DD');
