@@ -51,6 +51,22 @@ class Base {
         });
 	}
 
+	getImgSize (imgInfo) {
+	    //计算长宽比例
+	    let maxImgWidth = _config.get("maxImgWidth");
+	    let scale = imgInfo.height / imgInfo.width;
+	    if(scale > 1.4){
+	     	maxImgWidth = parseInt(maxImgWidth / 2, 10);
+	    }
+	    if(imgInfo.width >= maxImgWidth){
+	    	let percentVal = maxImgWidth / imgInfo.width;
+	    	imgInfo.width = parseInt(maxImgWidth, 10);
+	    	imgInfo.height = parseInt(imgInfo.height * percentVal, 10);
+	    }
+
+	    return imgInfo;
+	}
+
   	replacePhoneNumber (content) {
 	    content = content.replace(/1(\d{2})\d{4}(\d{4})/g, "1$1****$2");
 	    return content;

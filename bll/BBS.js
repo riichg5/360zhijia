@@ -7,6 +7,7 @@ let configs = require(_base + 'config/bbsUris.json');
 
 const RED_COLOR = "#ff0000";
 const GREEN_360 = "#008000";
+const IMG_MARK = "[[[img{pos}]]]";
 
 class BBS extends Base {
 	constructor(opts) {
@@ -23,6 +24,7 @@ class BBS extends Base {
         this.categoryId = config.categoryId;
         this.topImg = config.topImg;
         this.deepPageCount = config.deepPageCount || 999;
+        this.imgUrlsInfos = [];
 	}
 
     //出口方法
@@ -143,7 +145,7 @@ class BBS extends Base {
         }
 
         if(!isContains) {
-            subject = `${threadTitle}${subject}`;
+            subject = threadTitle.trim()+subject.trim();
         }
         return subject;
     }
@@ -195,8 +197,9 @@ class BBS extends Base {
         let posts = $("#moderate tr");
         let uris = [];
 
-        _.each(posts, post => {
+        for(let i=0; i<posts.length; i++) {
             let img = null;
+            let post = posts.eq(i);
             let img_reply = post.find("th img[alt='已答复']");
             let img_resolve = post.find("th img[alt='已解决']");
             let img_confirm = post.find("th img[alt='确认解决']");
@@ -224,7 +227,9 @@ class BBS extends Base {
                     uris.push(self.getUrlByPath(postLink.attr("href")));
                 }
             }
-        });
+        }
+        // _.each(posts, post => {
+        // });
         return uris;
     }
 
@@ -266,8 +271,8 @@ class BBS extends Base {
             for (let i = 0; i<$strongs.length; i++) {
                 let $ele = $strongs.eq(i);
 
-                cheerio.load("<div>[strong]</div>").insertBefore($ele);
-                cheerio.load("<div>[/strong]</div>").insertBefore($ele);
+                cheerio("<div>[strong]</div>").insertBefore($ele);
+                cheerio("<div>[/strong]</div>").insertAfter($ele);
             }
         }
     }
@@ -277,8 +282,9 @@ class BBS extends Base {
 
         for(var i=0; i<$centerFonts.length; i++) {
             if($centerFonts.eq(i).children('font').length === 1) {
-                cheerio.load("<div>[center]</div>").insertBefore($centerFonts.eq(i));
-                cheerio.load("<div>[/center]</div>").insertBefore($centerFonts.eq(i));
+                let $font = $centerFonts.eq(i);
+                cheerio("<div>[center]</div>").insertBefore($font);
+                cheerio("<div>[/center]</div>").insertAfter($font);
             }
         }
     }
@@ -326,11 +332,21 @@ class BBS extends Base {
 
     quoteContentFormat (opts) {
         let self = this;
-        let content = attrs.content;
-        let color = attrs.color;
-        let block = attrs.block;
+        let content = opts.content;
+        let color = opts.color;
+        let block = opts.block;
 
+        return _co(function* () {
+            let resContent = yield self.contentFormat({content: content, color: color});
 
+            if(cheerio.load(content).text().trim() !== "") {
+                resContent = block.replace("[[content]]", resContent);
+            } else {
+                resContent = "";
+            }
+
+            return resContent;
+        });
     }
 
     getColorP (color) {
@@ -367,31 +383,155 @@ class BBS extends Base {
         return text;
     }
 
+    clearTextFromContent (content) {
+        content = content.replace(/(>[\s]*(图文转载)[\s\S]*?(<\/div>))/gi, '');
+        content = content.replace(/(>[\s]*(转发编辑)[\s\S]*?(<\/div>))/gi, '');
+        return content;
+    }
+
+    getImgHtml (imgInfo) {
+        let self = this;
+        let maxImgWidth = _config.get("maxImgWidth");
+
+        imgInfo = self.getImgSize(imgInfo);
+
+        let html = `
+            <a href='${imgInfo.imagWebPath}' class='fancybox' data-fancybox-group='button'>
+                <img class='aligncenter' src='${imgInfo.imagWebPath}' width='${imgInfo.width}' height='${imgInfo.height}'>
+            </a>
+        `;
+
+        return html;
+    }
+
     contentFormat (opts) {
         let self = this;
         let content = opts.content;
         let color = opts.color;
         let pHtml = self.getColorP(color);
 
-        content = content.trim();
-        content = content.replace(/^(\n)+/g, "");
-        content = content.replace(/(\n)+$/g, "");
-        content = pHtml + content + "</p>";
-        content = content.replace(/(\n)+/g, "</p>#{pHtml}");
-        content = content.replace(/(&nbsp;)/gi, "");
-        content = self.recoverStrong(content);
-        content = self.recoverCenterFont(content);
-        content = self.replacePhoneNumber(content);
-        content = self.replaceWords(content);
-        content = self.convert_text_to_link(content);
-        content = self.convertTextToLink(content);
-        content = content.replace(/<p>\s+/gi, "<p>");        //删除段落前空白字符
-        content = content.replace(/<p>\s+<\/p>/gi, "");      //删除空行
-        content = content.replace(/<p>\s*<\/p>/gi, "");      //删除空行
-        content = content.replace(/<p><\/p>/gi, "");         //删除空行
-        content = content.replace(/<p>&nbsp;<\/p>/gi, "");   //删除空行
+        return _co(function* () {
+            content = content.trim();
+            content = content.replace(/^(\n)+/g, "");
+            content = content.replace(/(\n)+$/g, "");
+            content = pHtml + content + "</p>";
+            content = content.replace(/(\n)+/g, `</p>${pHtml}`);
+            content = content.replace(/(&nbsp;)/gi, "");
+            content = self.recoverStrong(content);
+            content = self.recoverCenterFont(content);
 
-        return content;
+            let downloadImgInfos = yield self.downImgs();
+            for(let item of downloadImgInfos) {
+                let imgHtml = self.getImgHtml(item.info);
+                self.logger.debug(`replace image flag, image html code: ${imgHtml}`);
+                content = content.replace(IMG_MARK.replace('{pos}', item.pos), imgHtml);
+                // console.log(content);
+            }
+
+            content = self.replacePhoneNumber(content);
+            content = self.replaceWords(content);
+            content = self.convertTextToLink(content);
+            content = self.clearTextFromContent(content);
+            content = content.replace(/<p>\s+/gi, "<p>");        //删除段落前空白字符
+            content = content.replace(/<p>\s+<\/p>/gi, "");      //删除空行
+            content = content.replace(/<p>\s*<\/p>/gi, "");      //删除空行
+            content = content.replace(/<p><\/p>/gi, "");         //删除空行
+            content = content.replace(/<p>&nbsp;<\/p>/gi, "");   //删除空行
+
+            return content;
+        });
+    }
+
+    markDiscuzImgs ($div) {
+        let self = this;
+        let $imgs = $div.find("img[src='http://b1.qikucdn.com/static/image/common/none.gif']");
+
+        if($imgs.length > 0) {
+            for(let i = 0; i<$imgs.length; i++) {
+                let zoomfile = $imgs.eq(i).attr('zoomfile');
+                let url = zoomfile;
+                let pos = self.imgUrlsInfos.length;
+
+                self.imgUrlsInfos.push({pos: pos, url: url});
+                cheerio(`<p>[[[img${pos}]]]</p>`).insertBefore($imgs.eq(i));
+            }
+            self.logger.debug(`include image amount: ${$imgs.length}`);
+        }
+    }
+
+    markDirectImgs ($div) {
+        let self = this;
+        let $imgs = $div.find("img[onmouseover='img_onmouseoverfunc(this)'][onload='thumbImg(this)']");
+
+        if($imgs.length > 0) {
+            for(let i=0; i<$imgs.length; i++) {
+                let url = $imgs.eq(i).attr('file');
+                let pos = self.imgUrlsInfos.length;
+
+                self.imgUrlsInfos.push({pos: pos, url: url});
+                cheerio(`<p>[[[img${pos}]]]</p>`).insertBefore($imgs.eq(i));
+            }
+            self.logger.debug(`include image amount: ${$imgs.length}`);
+        }
+    }
+
+    markShequMallImgs ($div) {
+        let self = this;
+        let $imgs = $div.find("img[onmouseover*='showMenu'][onclick*='zoom']"); //直接img标签引用的图片
+
+        if($imgs.length > 0) {
+            for(let i=0; i<$imgs.length; i++) {
+                let url = $imgs.eq(i).attr('zoomfile');
+                let pos = self.imgUrlsInfos.length;
+
+                self.imgUrlsInfos.push({pos: pos, url: url});
+                cheerio(`<p>[[[img${pos}]]]</p>`).insertBefore($imgs.eq(i));
+            }
+            self.logger.debug(`include image amount: ${$imgs.length}`);
+        }
+    }
+
+    markImgs ($div) {
+        let self = this;
+        self.markDiscuzImgs($div);
+        self.markDirectImgs($div);
+        self.markShequMallImgs($div);
+    }
+
+    downImgs () {
+        let self = this;
+        let imageInfos = [];
+
+        return _co(function* () {
+            imageInfos = yield _utils.coEach({
+                collection: self.imgUrlsInfos,
+                limit: 6,
+                func: function* (info) {
+                    let url = info.url;
+                    let pos = info.pos;
+                    let downloadImgInfo = yield self.imgDownload({imgUrl: url});
+                    return {
+                        pos: pos,
+                        info: downloadImgInfo
+                    };
+                }
+            });
+            return imageInfos;
+        });
+    // self = @
+    // funcs = []
+    // if self.img_urls_infos.length > 0
+    //   console.log "start download images, the urls is:", Tool.inspect(self.img_urls_infos)
+    // self.img_urls_infos.forEach (img_url_info) ->
+    //   func = (img_url_info) ->
+    //       (ecb) ->
+    //         HttpDownload.down_360_pic img_url_info.url, (err, info) ->
+    //           return ecb(null, {pos: img_url_info.pos, info: {width:0, height:0}}) if err
+    //           ecb(null, {pos: img_url_info.pos, info: info})
+    //   funcs.push func(img_url_info)
+    // Async.series funcs, (err, img_infos) ->
+    //   return cb(null, []) if err
+    //   cb(null, img_infos)
     }
 
     getPostContent (opts) {
@@ -403,7 +543,7 @@ class BBS extends Base {
 
         return _co(function* () {
             self.removeExcess($div);
-            let $firstTr = $div.find('table').eq(0).find("tr:first");
+            let $firstTr = $div.find('table').eq(0).find("tr").eq(0);
             if(!$firstTr) {
                 throw new Error("can not find $firstTr");
             }
@@ -421,7 +561,8 @@ class BBS extends Base {
             let isWorkerReply = self.isWorkerReply({$div: $div});
             self.logger.debug(`is_worker_reply: ${isWorkerReply}`);
 
-            yield self.procContentImgs({$html: $div});
+            self.markImgs($secondDiv);
+
             let attrs = {
                 content: $secondDiv.text(),
                 color: null,
@@ -431,18 +572,18 @@ class BBS extends Base {
             if(threadPageNum === 1 && divIndex === 0) {
                 if(self.needReply) {
                     attrs.color = GREEN_360;
-                    return self.quoteContentFormat(attrs);
+                    return yield self.quoteContentFormat(attrs);
                 } else {
                     attrs.block = "[[content]]";
-                    return self.quoteContentFormat(attrs);
+                    return yield self.quoteContentFormat(attrs);
                 }
             } else if(isWorkerReply) {
                 attrs.color = RED_COLOR;
                 attrs.block = "[[content]]";
-                return self.quoteContentFormat(attrs);
+                return yield self.quoteContentFormat(attrs);
             } else {
                 attrs.block = "[[content]]";
-                return self.quoteContentFormat(attrs);
+                return yield self.quoteContentFormat(attrs);
             }
         });
     }
@@ -457,12 +598,13 @@ class BBS extends Base {
 
         return _co(function* () {
             self.logger.debug(`current page reply amount is: ${postDivs.length}`);
-            if(postDivs.length) {
+            if(!postDivs.length) {
                 throw _utils.createError("Can not find post divs.");
             }
 
             let maxPostNum = needReply ? postDivs.length : 1;
             let divContents = [];
+
             for(var i=0; i<maxPostNum; i++) {
                 let content = yield self.getPostContent({
                     $div: postDivs.eq(i),
@@ -471,6 +613,8 @@ class BBS extends Base {
                 });
                 divContents.push(content);
             }
+
+            return divContents;
         });
     }
 
@@ -483,18 +627,18 @@ class BBS extends Base {
         let replyContent = '';
 
         for(let pageNum=1; pageNum<=pageContents.pageAmount; pageNum++) {
-            for(let contentNum=1; contentNum<=pageContents[i].length; contentNum++) {
+            for(let contentNum=1; contentNum<=pageContents[pageNum].length; contentNum++) {
                 let pageContentIndex = contentNum - 1;
-                self.logger.debug(`page_content_index: ${pageContentIndex} content_num: ${contentNum}`);
+                self.logger.debug(`pageNum: ${pageNum}, pageContentIndex: ${pageContentIndex} contentNum: ${contentNum}`);
                 if(pageNum === 1 && contentNum === 1) {
                     firstContent += '<p>' + pageContents[pageNum][pageContentIndex] + '</p>';
                 } else if(pageNum === 1 && contentNum === 2) {
                     applyAmount += 1;
                     replyAmountContent = `<p>&nbsp;</p><p><strong>共有[[replyAmound]]个回复供您参考:</strong></p>`;
-                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复#{applyAmount}:#{pageContents[pageNum][pageContentIndex]}</p>`;
+                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复${applyAmount}:${pageContents[pageNum][pageContentIndex]}</p>`;
                 } else {
                     applyAmount += 1;
-                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复#{applyAmount}:#{pageContents[pageNum][pageContentIndex]}</p>`;
+                    replyContent += `<p style='color:#999; font-size:80%;'>&nbsp;回复${applyAmount}:${pageContents[pageNum][pageContentIndex]}</p>`;
                 }
             }
         }
@@ -530,7 +674,7 @@ class BBS extends Base {
             }
 
             let content = {
-                threadPageCount: threadPageCount
+                pageAmount: threadPageCount
             };
 
             for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
@@ -555,16 +699,12 @@ class BBS extends Base {
                 content[pageNum] = childPageDivContents;
             }
 
-            let postsContent =
-            // info.$content = $("#article_box");
-            // info.$content.find("#article_box h2").eq(0).remove();
-            // info.$content.find(".article-msg").remove();
-            // info.$content.find("hr").remove();
+            info.content = self.getCommonPageHtml(content);
 
-            // yield self.baseHtmlProcess({$content: info.$content});
-            // let replaceInfo = yield self.procContentImgs({$html: info.$content});
-            // info.content = replaceInfo.html;
-            // info.excerpt = self.getExcerpt(info.$content.text());
+            //不需要恢复的话，则需要设置摘要
+            if(!config.needReply) {
+                info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
+            }
 
             return info;
         });

@@ -9,6 +9,7 @@ let job = (opts) => {
 	let context = opts.context;
 	let queue = context.queue;
 	let directory = __dirname;
+    let testJobs = _config.get("testJobs");
 
     fs.readdirSync(directory).forEach((filename) => {
         let fullPath, stat, match;
@@ -29,6 +30,13 @@ let job = (opts) => {
             try{
             	console.log("job filename: ", filename);
             	console.log("fullPath: ", fullPath);
+
+                if(process.env.NODE_ENV === 'test') {
+                    if(testJobs.indexOf(filename) === -1) {
+                        _logger.debug(`filename ${filename} removed.`);
+                        return;
+                    }
+                }
 
             	let job = null;
             	let obj = require(fullPath);
@@ -62,7 +70,7 @@ let job = (opts) => {
 
     for(let i = 0; i < jobs.length; i ++) {
         let job = jobs[i];
-        _logger.debug("start create msg.");
+        _logger.debug(`job: ${job.type} start create msg.`);
         job.createMsg();
     }
 };
