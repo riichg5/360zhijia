@@ -1,0 +1,50 @@
+[
+	{
+		"name": "360手机N5",
+		"uri": "http://bbs.360.cn/forum-7144-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "* 1 * * *",
+		"tagIds": [34, 497],
+		"categoryId": 34,
+		"deepPageCount": 100000,
+		"keyWords": ["360", "手机", "n5"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n5.jpg\"><img class=\"aligncenter size-medium wp-image-179507\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n5-300x223.jpg\" alt=\"360手机n5\" width=\"300\" height=\"223\" /></a>"
+	},
+	{
+		"name": "360手机Q5",
+		"uri": "http://bbs.360.cn/forum-7088-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "* 2 * * *",
+		"tagIds": [34, 494],
+		"categoryId": 34,
+		"deepPageCount": 100000,
+		"keyWords": ["360", "手机", "q5"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2016/12/q5.jpg\"><img class=\"aligncenter size-medium wp-image-172047\" src=\"http://www.360zhijia.com/wp-content/uploads/2016/12/q5-300x260.jpg\" alt=\"360手机Q5\" width=\"300\" height=\"260\" /></a>"
+	},
+	{
+		"name": "360手机N4S",
+		"uri": "http://bbs.360.cn/forum-7076-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "* 3 * * *",
+		"tagIds": [34, 498],
+		"categoryId": 34,
+		"deepPageCount": 100000,
+		"keyWords": ["360", "手机", "n4s"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4s.jpg\"><img class=\"aligncenter size-medium wp-image-179516\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4s-300x187.jpg\" alt=\"360n4s\" width=\"300\" height=\"187\" /></a>"
+	},
+	{
+		"name": "360手机N4",
+		"uri": "http://bbs.360.cn/forum-5454-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "* 4 * * *",
+		"tagIds": [34, 499],
+		"categoryId": 34,
+		"deepPageCount": 100000,
+		"keyWords": ["360", "手机", "n4"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4.jpg\"><img class=\"aligncenter size-medium wp-image-179518\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4-286x300.jpg\" alt=\"360n4\" width=\"286\" height=\"300\" /></a>"
+	}
+]

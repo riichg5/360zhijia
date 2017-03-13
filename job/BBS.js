@@ -1,6 +1,6 @@
 //360论坛
 let Base = require('./Base');
-let IsProcessing = false;
+// let IsProcessing = false;
 let configs = require(_base + 'config/bbsUris.json');
 
 class BBS extends Base {
@@ -49,9 +49,9 @@ class BBS extends Base {
 				}).then(res => {
 					let endTime = new Date().getTime();
 					self.logger.info("job type: ${self.type}:${item.name} is over. used time:", Math.round((endTime - startTime) / 1000));
-					IsProcessing = false;
+					item.IsProcessing = false;
 				}).catch(error => {
-					IsProcessing = false;
+					item.IsProcessing = false;
 					self.logger.error("job type: ${self.type}:${item.name} failed.");
 					self.logger.error("error:", error.message);
 					self.logger.error("stack:", error.stack);

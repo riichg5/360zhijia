@@ -16,6 +16,7 @@ class BBS extends Base {
 
 		super(context);
         this.name = config.name;
+        this.img = config.img;
         this.uri = config.uri;
         this.needReply = config.needReply;
         this.priority = config.priority;
@@ -34,13 +35,19 @@ class BBS extends Base {
         let createMsgFunc = opts.createMsgFunc;
 
         return _co(function* () {
+            let $firstPage = yield self.loadUri({uri: self.uri});
+            let forumMaxPageNum = self.getFormMaxPageCount($firstPage);
+            self.logger.debug(`forum max number is: ${forumMaxPageNum}`);
+            let maxPageNum = forumMaxPageNum >= self.deepPageCount ? self.deepPageCount : forumMaxPageNum;
+            self.logger.debug(`for each maxPageNum is: ${maxPageNum}`);
             //循环最大deep page
-            for(var forumPageNum=1; forumPageNum <= self.deepPageCount; forumPageNum++) {
+            for(var forumPageNum=1; forumPageNum <= maxPageNum; forumPageNum++) {
                 let $ = null;
 
                 if(forumPageNum === 0) {
                     self.logger.debug(`first forum page uri is: ${self.uri}`);
-                    $ = yield self.loadUri({uri: self.uri});
+                    $ = $firstPage;
+                    // $ = yield self.loadUri({uri: self.uri});
                 } else {
                     let uri = self.getForumPageUrl({pageUrl: self.uri, pageNum: forumPageNum});
                     self.logger.debug(`forum page number is: ${forumPageNum}, uri is: ${uri}`);
@@ -206,6 +213,9 @@ class BBS extends Base {
             let img_请补充 = post.find("th img[alt='请补充']");
             let img_已收录 = post.find("th img[alt='已收录']");
             let img_版主推荐 = post.find("th img[alt='版主推荐']");
+            let img_优秀 = post.find("th img[alt='优秀']");
+            let img_已阅 = post.find("th img[alt='已阅']");
+            let img_热帖 = post.find("th img[alt='热帖']");
 
             if(img_reply.length > 0) {
                 img = img_reply;
@@ -219,7 +229,14 @@ class BBS extends Base {
                 img = img_已收录;
             } else if(img_版主推荐.length > 0) {
                 img = img_版主推荐;
+            } else if(img_优秀.length > 0) {
+                img = img_优秀;
+            } else if(img_已阅.length > 0) {
+                img = img_已阅;
+            } else if(img_热帖.length > 0) {
+                img = img_热帖;
             }
+
 
             if(img) {
                 let postLink = img.eq(0).prev('a').first();
@@ -322,9 +339,16 @@ class BBS extends Base {
         let context = self.context;
         let $div = opts.$div;
 
-        let content = $div.find("font").html();
+        let content = $div.find("font").text();
         self.logger.debug(`content: ${content}`);
-        let indexOf = ['产品答疑师', '工作人员', '社区管家', '实习版主', '版主'].indexOf(content);
+        let indexOf = [
+            '管理员',
+            '产品答疑师',
+            '工作人员',
+            '社区管家',
+            '实习版主',
+            '版主'
+        ].indexOf(content);
         self.logger.debug(`['产品答疑师', '工作人员', '社区管家', '实习版主', '版主'] indexOf is: ${indexOf}`);
 
         return indexOf > -1;
@@ -351,7 +375,7 @@ class BBS extends Base {
 
     getColorP (color) {
         if(color) {
-            return "<p style='color:#{color};'>";
+            return `<p style='color:${color};'>`;
         }
         return "<p>";
     }
@@ -559,7 +583,7 @@ class BBS extends Base {
             }
 
             let isWorkerReply = self.isWorkerReply({$div: $div});
-            self.logger.debug(`is_worker_reply: ${isWorkerReply}`);
+            self.logger.debug(`isWorkerReply: ${isWorkerReply}`);
 
             self.markImgs($secondDiv);
 
@@ -646,6 +670,17 @@ class BBS extends Base {
         return [firstContent, replyAmountContent.replace('[[replyAmound]]', applyAmount), replyContent].join('');
     }
 
+    addTopImg (opts) {
+        let self = this;
+        let content = opts.content;
+
+        if(content.indexOf('<img') === -1) {
+            content = "<p>"+ self.img + "</p>" + content;
+        }
+
+        return content;
+    }
+
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
@@ -700,6 +735,7 @@ class BBS extends Base {
             }
 
             info.content = self.getCommonPageHtml(content);
+            info.content = self.addTopImg({content: info.content});
 
             //不需要恢复的话，则需要设置摘要
             if(!config.needReply) {

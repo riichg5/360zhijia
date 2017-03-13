@@ -9,7 +9,7 @@ let job = (opts) => {
 	let context = opts.context;
 	let queue = context.queue;
 	let directory = __dirname;
-    let testJobs = _config.get("testJobs");
+    let testJobs = _config.get("testJobs") || [];
 
     fs.readdirSync(directory).forEach((filename) => {
         let fullPath, stat, match;

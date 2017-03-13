@@ -60,7 +60,7 @@
     "PicPath": "/Users/libo/ubey/super360/download",
     "imgWebPath": "/wp-content/uploads",
     "maxImgWidth": 600,
-    "cacheTTL": 172800,
+    "cacheTTL": 259200,
     "excerptLength": 200,
     "push": {
         "baidu": "http://www.baidu.com"
@@ -68,5 +68,6 @@
     "syntaxHighlighter": {
         "css": "/wp-content/themes/super360/shCoreDefault.css",
         "js": "/wp-content/themes/super360/shCore.js"
-    }
+    },
+    "testJobs": []
 }
