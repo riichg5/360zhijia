@@ -58,6 +58,9 @@
         "Concurrency": 1     //并发量
 	},
     "PicPath": "/Users/libo/ubey/super360/download",
+    "push": {
+        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=FiSWUUVP52elUAoP"
+    },
     "imgWebPath": "/wp-content/uploads",
     "maxImgWidth": 600,
     "cacheTTL": 259200,
