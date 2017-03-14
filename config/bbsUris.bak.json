@@ -7,7 +7,7 @@
 		"cron": "* 1 * * *",
 		"tagIds": [34, 497],
 		"categoryId": 34,
-		"deepPageCount": 100000,
+		"deepPageCount": 30,
 		"keyWords": ["360", "手机", "n5"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n5.jpg\"><img class=\"aligncenter size-medium wp-image-179507\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n5-300x223.jpg\" alt=\"360手机n5\" width=\"300\" height=\"223\" /></a>"
 	},
@@ -19,7 +19,7 @@
 		"cron": "* 2 * * *",
 		"tagIds": [34, 494],
 		"categoryId": 34,
-		"deepPageCount": 100000,
+		"deepPageCount": 30,
 		"keyWords": ["360", "手机", "q5"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360q5.jpg\"><img class=\"aligncenter size-medium wp-image-179519\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360q5-300x257.jpg\" alt=\"360q5\" width=\"300\" height=\"257\" /></a>"
 	},
@@ -31,7 +31,7 @@
 		"cron": "* 3 * * *",
 		"tagIds": [34, 498],
 		"categoryId": 34,
-		"deepPageCount": 100000,
+		"deepPageCount": 30,
 		"keyWords": ["360", "手机", "n4s"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4s.jpg\"><img class=\"aligncenter size-medium wp-image-179516\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4s-300x187.jpg\" alt=\"360n4s\" width=\"300\" height=\"187\" /></a>"
 	},
@@ -43,7 +43,7 @@
 		"cron": "* 4 * * *",
 		"tagIds": [34, 499],
 		"categoryId": 34,
-		"deepPageCount": 100000,
+		"deepPageCount": 30,
 		"keyWords": ["360", "手机", "n4"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4.jpg\"><img class=\"aligncenter size-medium wp-image-179518\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/03/360n4-286x300.jpg\" alt=\"360n4\" width=\"286\" height=\"300\" /></a>"
 	}
