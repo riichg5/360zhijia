@@ -26,6 +26,7 @@ class BBS extends Base {
         this.topImg = config.topImg;
         this.deepPageCount = config.deepPageCount || 999;
         this.imgUrlsInfos = [];
+        this.firstThreadUri = "";
 	}
 
     //出口方法
@@ -77,6 +78,7 @@ class BBS extends Base {
         let uri = opts.uri;
         let needReply = opts.needReply;
 
+        self.firstThreadUri = uri;
         return _co(function* () {
             let bArticle = self.BLL.createArticle(context);
             let articleInfo = yield self.getArticleInfo({threadUri: uri});
@@ -452,6 +454,8 @@ class BBS extends Base {
                 // console.log(content);
             }
 
+            //下载完图片后一定要清空
+            self.imgUrlsInfos = [];
             content = self.replacePhoneNumber(content);
             content = self.replaceWords(content);
             content = self.convertTextToLink(content);
@@ -527,6 +531,8 @@ class BBS extends Base {
         let imageInfos = [];
 
         return _co(function* () {
+            self.logger.debug("thread uri is:", self.firstThreadUri);
+            self.logger.debug("down imgs:", self.imgUrlsInfos);
             imageInfos = yield _utils.coEach({
                 collection: self.imgUrlsInfos,
                 limit: 6,
@@ -564,6 +570,7 @@ class BBS extends Base {
         let $div = opts.$div;
         let divIndex = opts.divIndex;
         let threadPageNum = opts.threadPageNum;
+        let pageUri = opts.pageUri;
 
         return _co(function* () {
             self.removeExcess($div);
@@ -618,6 +625,7 @@ class BBS extends Base {
         let threadPageNum = self.threadPageNum;
         let needReply = opts.needReply;
         let $ = opts.page$;
+        let pageUri = opts.pageUri;
         let postDivs = self.getPostDivs({$: $});
 
         return _co(function* () {
@@ -633,7 +641,8 @@ class BBS extends Base {
                 let content = yield self.getPostContent({
                     $div: postDivs.eq(i),
                     divIndex: i,
-                    threadPageNum: threadPageNum
+                    threadPageNum: threadPageNum,
+                    pageUri: pageUri
                 });
                 divContents.push(content);
             }
@@ -714,21 +723,24 @@ class BBS extends Base {
 
             for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
                 let pageCheerio = $;
+                let pageUri;
 
                 if(pageNum !== 1) {
-                    let pageUri = self.getThreadPageUrl({
+                    pageUri = self.getThreadPageUrl({
                         pageUrl: threadUri,
                         pageNum: pageNum
                     });
                     pageCheerio = self.loadUri({uri: pageUri});
                 } else {
+                    pageUri = threadUri;
                     pageCheerio = $;
                 }
 
                 let childPageDivContents = yield self.getThreadContent({
                     page$: pageCheerio,
                     needReply: config.needReply,
-                    threadPageNum: pageNum
+                    threadPageNum: pageNum,
+                    pageUri: pageUri,
                 });
 
                 content[pageNum] = childPageDivContents;
