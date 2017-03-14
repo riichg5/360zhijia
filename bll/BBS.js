@@ -730,7 +730,7 @@ class BBS extends Base {
                         pageUrl: threadUri,
                         pageNum: pageNum
                     });
-                    pageCheerio = self.loadUri({uri: pageUri});
+                    pageCheerio = yield self.loadUri({uri: pageUri});
                 } else {
                     pageUri = threadUri;
                     pageCheerio = $;
