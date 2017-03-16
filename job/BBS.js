@@ -48,11 +48,11 @@ class BBS extends Base {
 					return;
 				}).then(res => {
 					let endTime = new Date().getTime();
-					self.logger.info("job type: ${self.type}:${item.name} is over. used time:", Math.round((endTime - startTime) / 1000));
+					self.logger.info(`job type: ${self.type}:${item.name} is over. used time:`, Math.round((endTime - startTime) / 1000));
 					item.IsProcessing = false;
 				}).catch(error => {
 					item.IsProcessing = false;
-					self.logger.error("job type: ${self.type}:${item.name} failed.");
+					self.logger.error(`job type: ${self.type}:${item.name} failed.`);
 					self.logger.error("error:", error.message);
 					self.logger.error("stack:", error.stack);
 				});
