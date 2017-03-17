@@ -59,7 +59,7 @@
 	},
     "PicPath": "/Users/libo/ubey/super360/download",
     "push": {
-        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=FiSWUUVP52elUAoP"
+        "baidu": "http://data.zz.baidu.com/urls?site=www.baidu.com&token=xxxxxxx"
     },
     "imgWebPath": "/wp-content/uploads",
     "maxImgWidth": 600,
