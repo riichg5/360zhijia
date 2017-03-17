@@ -55,7 +55,7 @@
         "title": "super360爬虫队列",
 		"port": 3002,
         "prefix": "360",
-        "Concurrency": 1     //并发量
+        "Concurrency": 1
 	},
     "PicPath": "/Users/libo/ubey/super360/download",
     "push": {
