@@ -196,7 +196,7 @@
 		"uri": "http://bbs.360.cn/forum-7004-1.html",
 		"needReply": true,
 		"priority": "normal",
-		"cron": "* */3 * * *",
+		"cron": "* */2 * * *",
 		"tagIds": [34, 419],
 		"categoryId": 34,
 		"deepPageCount": 10,

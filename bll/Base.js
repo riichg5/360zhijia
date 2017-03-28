@@ -115,7 +115,7 @@ class Base {
 			let pOn = Promise.promisify(picStream.on).bind(picStream);
 
 			let requestInfo = request.get({
-				url: imgUrl,
+				uri: imgUrl,
 				timeout: 99999
 			}).pipe(picStream);
 
