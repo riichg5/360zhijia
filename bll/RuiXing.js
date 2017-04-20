@@ -19,8 +19,7 @@ class RuiXing extends Base {
     addDefaultImg (html) {
         let self = this;
 
-        if(html.indexOf('<img') === -1 ||
-            html.indexOf('<IMG') === -1) {
+        if(html.indexOf('<img') === -1) {
             return "<p>" + self.defaultImg + "</p>" + html;
         }
 
