@@ -135,11 +135,36 @@ class Base {
 		});
 	}
 
+	isWeiXinUri (uri) {
+		return uri.indexOf('://mp.weixin.qq.com') !== -1;
+	}
+
+	getImgSrc (opts) {
+		let self = this;
+		let context = self.context;
+		let uri = opts.uri;
+		let $img = opts.$img;
+		let src;
+
+		if(self.isWeiXinUri(uri)) {
+			src = $img.attr('data-src');
+		} else {
+			src = $img.attr('src');
+		}
+
+		if(src.indexOf('http://') === -1) {
+			src = url.resolve(uri, encodeURI(src));
+		}
+
+		return src;
+	}
+
 	//处理文章中的图片
 	procContentImgs (opts) {
 		let self = this;
 		let context = self.context;
 		let $ = opts.$html;
+		let uri = opts.uri || self.uri;
 		let imgArray = [];
 		let images = $.find('img');
 		let firstImgUrl = null;
@@ -151,11 +176,7 @@ class Base {
 
 		// self.logger.debug("images:", imgArray);
 		return Promise.each(imgArray, ($img, index, length) => {
-			let src = $img.attr('src');
-
-			if(src.indexOf('http://') === -1) {
-				src = url.resolve(self.uri, encodeURI(src));
-			}
+			let src = self.getImgSrc({uri: uri, $img: $img});
 
 			return self.imgDownload({imgUrl: src}).then(res => {
 				let imagWebPath = res.imagWebPath;
@@ -214,9 +235,14 @@ class Base {
 		let self = this;
 		let context = self.context;
 		let $content = opts.$content;
+		let uri = opts.uri;
 
 		return _co(function* () {
 			self.addSyntaxHighlighter({$content: $content});
+			self.convertWeiXinFrameVideo({
+				$content: $content,
+				uri: uri
+			});
 			yield _resolve();
 			return;
 		});
@@ -228,6 +254,63 @@ class Base {
     	text = text.replace(/(&nbsp;)/gi, "");
     	text = text.replace(/^(\s)+/g, "");
 		return text;
+	}
+
+    //将文本里面的url链接转换为html a标签
+    convertTextToLink (text) {
+        text.replace(
+            /((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi,
+            "<a href='$1' target='_blank'>$1</a>"
+        );
+        return text;
+    }
+
+    convertHtmlDecode (html) {
+    	return html.replace(/(&#)\S{5};/gi, str => {
+    		return cheerio.load(`<p>${str}</p>`).text();
+    	});
+    }
+
+    convertWeiXinFrameVideo (opts) {
+    	let self = this;
+    	let context = self.context;
+    	let $content = opts.$content;
+    	let uri = opts.uri;
+
+    	if(!self.isWeiXinUri(uri)) {
+    		return;
+    	}
+
+    	let videoFrames = $content.find("iframe.video_iframe");
+    	for(let i = 0; i < videoFrames.length; i++) {
+    		let $frame = videoFrames.eq(i);
+    		let flashFrameUri = $frame.attr('data-src');
+    		$frame.attr("src", flashFrameUri);
+    //
+    // 		let $flash = cheerio(`
+    // 			<div>
+				// 	<embed
+				// 	src="${flashUri}"
+				// 	width="670px"
+				// 	height="502px"
+				// 	align="middle">
+				// </div>
+    // 		`);
+
+    // 		self.logger.debug("------------------>", $flash.html());
+    // 		$frame.replaceWith($flash);
+    	}
+    }
+
+	filterHtml (html) {
+		let self = this;
+
+		html = self.convertHtmlDecode(html);
+        html = self.replacePhoneNumber(html);
+        html = self.replaceWords(html);
+        html = self.convertTextToLink(html);
+
+        return html;
 	}
 
 	getExcerpt (text) {

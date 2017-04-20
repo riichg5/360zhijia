@@ -400,14 +400,14 @@ class BBS extends Base {
         return text;
     }
 
-    //将文本里面的url链接转换为html a标签
-    convertTextToLink (text) {
-        text.replace(
-            /((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi,
-            "<a href='$1' target='_blank'>$1</a>"
-        );
-        return text;
-    }
+    // //将文本里面的url链接转换为html a标签
+    // convertTextToLink (text) {
+    //     text.replace(
+    //         /((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)/gi,
+    //         "<a href='$1' target='_blank'>$1</a>"
+    //     );
+    //     return text;
+    // }
 
     clearTextFromContent (content) {
         content = content.replace(/(>[\s]*(图文转载)[\s\S]*?(<\/div>))/gi, '');

@@ -76,9 +76,9 @@ class AnQuan extends Base {
             info.$content.find(".article-msg").remove();
             info.$content.find("hr").remove();
 
-            yield self.baseHtmlProcess({$content: info.$content});
+            yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content});
-            info.content = replaceInfo.html;
+            info.content = self.filterHtml(replaceInfo.html);
             info.excerpt = self.getExcerpt(info.$content.text());
 
             return info;

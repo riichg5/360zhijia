@@ -1,0 +1,14 @@
+[
+	{
+		"name": "瑞星动态",
+		"uri": "http://it.rising.com.cn/dongtai/index.html",
+		"needReply": false,
+		"priority": "normal",
+		"cron": "*/5 * * * * *",
+		"tagIds": [8],
+		"categoryId": 8,
+		"deepPageCount": 1,
+		"keyWords": [],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/04/ruixing.jpg\"><img class=\"aligncenter size-medium wp-image-191644\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/04/ruixing-300x241.jpg\" alt=\"\" width=\"300\" height=\"241\" /></a>"
+	}
+]
