@@ -95,11 +95,21 @@ class Base {
 		return info;
 	}
 
+	getImgExt (imgUrl) {
+		//腾讯图片有些http://shp.qpic.cn/txdiscuz_pic/0/_bbs_guanjia_qq_com_forum_201704_24_111343ppfpp0pfhror2rvf.png/0格式
+		if(_.endsWith(imgUrl, "/0")) {
+			let len = imgUrl.length;
+			return path.parse(imgUrl.substring(0, len-2)).ext;
+		} else {
+			return path.parse(imgUrl).ext;
+		}
+	}
+
 	imgDownload (opts) {
 		let self = this;
 		let imgUrl = opts.imgUrl;
 		let imgInfo = self.getImageFolderName();
-		let ext = path.parse(imgUrl).ext;
+		let ext = self.getImgExt(imgUrl); //path.parse(imgUrl).ext;
 		let uuidVal = uuid.v4();
 		let imageName = path.join(imgInfo.webPath, uuidVal + ext);
 		let imagePath = path.join(imgInfo.fullPath, uuidVal + ext);
