@@ -5,7 +5,7 @@
 		"uri": "http://bbs.guanjia.qq.com/forum.php?mod=forumdisplay&fid=77&page=1",
 		"needReply": true,
 		"priority": "normal",
-		"cron": "43 */3 * * *",
+		"cron": "43 */1 * * *",
 		"tagIds": [500, 502],
 		"categoryId": 500,
 		"deepPageCount": 12,
