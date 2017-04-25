@@ -1,0 +1,15 @@
+[
+	{
+		"name": "问题反馈",
+		"aliasName": "腾讯电脑管家",
+		"uri": "http://bbs.guanjia.qq.com/forum.php?mod=forumdisplay&fid=77&page=1",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "43 */3 * * *",
+		"tagIds": [500, 502],
+		"categoryId": 500,
+		"deepPageCount": 12,
+		"keyWords": ["腾讯", "管家"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia.jpg\"><img class=\"aligncenter size-medium wp-image-192571\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia-300x175.jpg\" alt=\"\" width=\"300\" height=\"175\" /></a>"
+	}
+]
