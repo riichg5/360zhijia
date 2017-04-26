@@ -200,6 +200,15 @@ class QQ extends Base {
         return uri;
     }
 
+    getPureUri (uri) {
+        let splits = uri.split('&');
+        _.remove(splits, item => {
+            return item.indexOf("extra=") !== -1;
+        });
+
+        return splits.join('&');
+    }
+
     getForumResolvedUris ($) {
         let self = this;
         let context = self.context;
@@ -215,7 +224,7 @@ class QQ extends Base {
             if(href.length) {
                 let postLink = href.eq(0);
                 if(postLink) {
-                    uris.push(self.getUrlByPath(postLink.attr("href")));
+                    uris.push(self.getPureUri(self.getUrlByPath(postLink.attr("href"))));
                 }
             }
         }
