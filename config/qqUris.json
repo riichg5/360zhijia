@@ -8,7 +8,7 @@
 		"cron": "43 */1 * * *",
 		"tagIds": [500, 502],
 		"categoryId": 500,
-		"deepPageCount": 12,
+		"deepPageCount": 6,
 		"keyWords": ["腾讯", "管家"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia.jpg\"><img class=\"aligncenter size-medium wp-image-192571\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia-300x175.jpg\" alt=\"\" width=\"300\" height=\"175\" /></a>"
 	}
