@@ -479,10 +479,27 @@ class QQ extends Base {
         }
     }
 
+    markCommonImgs ($div) {
+        let self = this;
+        let $imgs = $div.find("img[src^='http://']");
+
+        if($imgs.length > 0) {
+            for(let i=0; i<$imgs.length; i++) {
+                let url = $imgs.eq(i).attr('src');
+                let pos = self.imgUrlsInfos.length;
+
+                self.imgUrlsInfos.push({pos: pos, url: url});
+                cheerio(`<p>[[[img${pos}]]]</p>`).insertBefore($imgs.eq(i));
+            }
+            self.logger.debug(`include image amount: ${$imgs.length}`);
+        }
+    }
+
     markImgs ($div) {
         let self = this;
         self.markDiscuzImgs($div);
         self.markDirectImgs($div);
+        self.markCommonImgs($div);
     }
 
     downImgs () {
