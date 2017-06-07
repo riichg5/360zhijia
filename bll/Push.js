@@ -30,7 +30,7 @@ class Push extends Base {
             self.logger.debug(`${uri} push to baidu success.`);
             return;
         }).catch(error => {
-            self.logger.debug("${uri} push to baidu failed. error message: ${error.message}");
+            self.logger.debug(`${uri} push to baidu failed. error message: ${error.message}`);
             self.logger.debug("error stack: ", error.stack);
             return;
         });
@@ -60,7 +60,7 @@ class Push extends Base {
             self.logger.debug(`${uri} push to mip baidu success.`);
             return;
         }).catch(error => {
-            self.logger.debug("${uri} push to mip baidu failed. error message: ${error.message}");
+            self.logger.debug(`${uri} push to mip baidu failed. error message: ${error.message}`);
             self.logger.debug("error stack: ", error.stack);
             return;
         });
