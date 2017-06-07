@@ -1,6 +1,7 @@
 {
 	"appName": "super360",
     "siteUrl": "http://localhost/",
+    "mobileSiteUrl": "http://localhost/",
 	"logger": {
 		"level": "trace"
 	},
@@ -59,7 +60,8 @@
 	},
     "PicPath": "/Users/libo/ubey/super360/download",
     "push": {
-        "baidu": "http://data.zz.baidu.com/urls?site=www.baidu.com&token=xxxxxxx"
+        "baidu": "http://data.zz.baidu.com/urls?site=www.baidu.com&token=xxxxxxx",
+        "mipBaidu": "http://data.zz.baidu.com/urls?site=m.360zhijia.com&token=xMDevGvrZlHfRZYy&type=mip"
     },
     "imgWebPath": "/wp-content/uploads",
     "maxImgWidth": 600,

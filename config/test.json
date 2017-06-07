@@ -5,7 +5,7 @@
 	},
 	"PicPath": "/Users/libo/www/360zhijia/wp-content/uploads",
     "push": {
-        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=FiSWUUVP52elUAoP"
+        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=xMDevGvrZlHfRZYy"
     },
     "testJobs": ["QQ.js"]
 }

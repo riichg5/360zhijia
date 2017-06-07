@@ -335,6 +335,14 @@ class Base {
 		return `${siteUrl}${categoryName}/${postId}.html`;
 	}
 
+	getBaiduMipPageUri (opts) {
+		let siteUrl = _config.get("mobileSiteUrl");
+		let categoryName = opts.categoryName;
+		let postId = opts.postId;
+
+		return `${siteUrl}${categoryName}/${postId}.html`;
+	}
+
 	pushUri (opts) {
 		let self = this;
 		let context = self.context;
@@ -350,8 +358,12 @@ class Base {
 	            return yield _reject("can not get category.");
 	        }
 	        let pageUrl = self.getPageUri({postId: postId, categoryName: categoryName});
+	        let baiduMipPageUrl = self.getBaiduMipPageUri({postId: postId, categoryName: categoryName});
 
-	        yield bPush.pushToAll({uri: pageUrl});
+	        yield [
+	        	bPush.pushToAll({uri: pageUrl}),
+	        	bPush.pushToBaiduMip({uri: baiduMipPageUrl})
+	        ];
 		});
 	}
 }
