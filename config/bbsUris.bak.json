@@ -1,5 +1,17 @@
 [
 	{
+		"name": "360手机N5S",
+		"uri": "http://bbs.360.cn/forum-7224-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "44 */3 * * *",
+		"tagIds": [34, 497],
+		"categoryId": 34,
+		"deepPageCount": 12,
+		"keyWords": ["360", "手机", "n5"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/06/360_n5s.jpg\"><img class=\"aligncenter size-medium wp-image-211429\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/06/360_n5s-300x300.jpg\" alt=\"360手机N5S\" width=\"300\" height=\"300\" /></a>"
+	},
+	{
 		"name": "360手机N5",
 		"uri": "http://bbs.360.cn/forum-7144-1.html",
 		"needReply": true,
@@ -81,7 +93,7 @@
 		"categoryId": 34,
 		"deepPageCount": 10,
 		"keyWords": ["安全", "卫士"],
-		"img": "<div id=\"attachment_17736\" style=\"width: 310px\" class=\"wp-caption aligncenter\"><a href=\"http://www.360zhijia.com/wp-content/uploads/2015/01/87CA0E68-1E1D-4B93-992F-A78391D23D49.jpg\" class=\"cboxElement\" rel=\"example_group\" 17735=\"\"><img class=\"size-medium wp-image-17736\" src=\"http://www.360zhijia.com/wp-content/uploads/2015/01/87CA0E68-1E1D-4B93-992F-A78391D23D49-300x226.jpg\" alt=\"360安全卫士\" width=\"300\" height=\"226\" original=\"http://www.360zhijia.com/wp-content/uploads/2015/01/87CA0E68-1E1D-4B93-992F-A78391D23D49-300x226.jpg\"></a><p class=\"wp-caption-text\">360安全卫士</p></div>"
+		"img": "<a class=\"cboxElement\" href=\"http://www.360zhijia.com/wp-content/uploads/2015/01/87CA0E68-1E1D-4B93-992F-A78391D23D49.jpg\" rel=\"example_group\"><img class=\"size-medium wp-image-17736 aligncenter\" src=\"http://www.360zhijia.com/wp-content/uploads/2015/01/87CA0E68-1E1D-4B93-992F-A78391D23D49-300x226.jpg\" alt=\"360安全卫士\" width=\"300\" height=\"226\" /></a>"
 	},
 	{
 		"name": "手机卫士",
@@ -105,7 +117,7 @@
 		"categoryId": 34,
 		"deepPageCount": 10,
 		"keyWords": ["360", "安全", "浏览器"],
-		"img": "<p style=\"text-align: center;\"><a href=\"http://www.360zhijia.com/wp-content/uploads/2014/12/AE0C9B48-8BBA-4822-AF30-E97B42C281B1.jpg\"><img class=\"aligncenter  wp-image-8190\" alt=\"360安全浏览器\" src=\"http://www.360zhijia.com/wp-content/uploads/2014/12/AE0C9B48-8BBA-4822-AF30-E97B42C281B1-1024x563.jpg\" width=\"368\" height=\"203\" /></a></p>"
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2014/12/AE0C9B48-8BBA-4822-AF30-E97B42C281B1.jpg\"><img class=\"aligncenter  wp-image-8190\" alt=\"360安全浏览器\" src=\"http://www.360zhijia.com/wp-content/uploads/2014/12/AE0C9B48-8BBA-4822-AF30-E97B42C281B1-1024x563.jpg\" width=\"368\" height=\"203\" /></a>"
 	},
 	{
 		"name": "极速浏览器",
@@ -140,7 +152,7 @@
 		"tagIds": [34, 439],
 		"categoryId": 34,
 		"deepPageCount": 10,
-		"keyWords": ["360", "企业", "网管版"],
+		"keyWords": ["360", "企业", "网管版", "天擎"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2015/01/4C31A042-5DC7-4F16-B95C-D0C89E24B871.jpg\"><img class=\"aligncenter wp-image-21831 size-medium\" src=\"http://www.360zhijia.com/wp-content/uploads/2015/01/4C31A042-5DC7-4F16-B95C-D0C89E24B871-300x223.jpg\" alt=\"360网管版\" width=\"300\" height=\"223\" /></a>"
 	},
 	{
