@@ -750,9 +750,9 @@ class BBS extends Base {
             info.content = self.addTopImg({content: info.content});
 
             //不需要恢复的话，则需要设置摘要
-            if(!config.needReply) {
+            // if(!config.needReply) {
                 info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
-            }
+            // }
 
             return info;
         });
