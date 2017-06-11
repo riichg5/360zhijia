@@ -264,6 +264,7 @@ class Base {
     	text = text.replace(/(&nbsp;)/gi, "");
     	text = text.replace(/^(\s)+/g, "");
     	text = text.replace(/(<br\/>)/gi, "");
+    	text = text.replace(/(<br>)/gi, "");
 		return text;
 	}
 
