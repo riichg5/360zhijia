@@ -263,6 +263,7 @@ class Base {
     	text = text.replace(/(\n\r)+$/g, "");
     	text = text.replace(/(&nbsp;)/gi, "");
     	text = text.replace(/^(\s)+/g, "");
+    	text = text.replace(/(<br\/>)/gi, "");
 		return text;
 	}
 
