@@ -124,12 +124,17 @@ class Base {
 			let picStream = fs.createWriteStream(imagePath);
 			let pOn = Promise.promisify(picStream.on).bind(picStream);
 
-			let requestInfo = request.get({
-				uri: imgUrl,
-				timeout: 60 * 1000
-			}).pipe(picStream);
+			try {
+				let requestInfo = request.get({
+					uri: imgUrl,
+					timeout: 60 * 1000
+				}).pipe(picStream);
 
-			yield pOn('close');
+				yield pOn('close');
+			} catch (error) {
+				return _reject(`download img error, error: ${error.message}, stack: ${error.stack}`);
+			}
+
 			self.logger.debug("saved....");
 			let pImageInfo = Promise.promisify(imageInfo);
 			let info = yield pImageInfo(imagePath);
