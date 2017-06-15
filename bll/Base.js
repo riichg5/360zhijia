@@ -107,7 +107,7 @@ class Base {
 
 	imgDownload (opts) {
 		let self = this;
-		let imgUrl = opts.imgUrl;
+		let imgUrl = opts.imgUrl.trim();
 		let imgInfo = self.getImageFolderName();
 		let ext = self.getImgExt(imgUrl); //path.parse(imgUrl).ext;
 		let uuidVal = uuid.v4();
