@@ -15,6 +15,8 @@ class Job extends Base {
 		let priority = self.priority;
 		let superCreateMsg = super.createMsg.bind(self);
 
+		return _resolve();
+
 		//18分钟一次
 		self.schedule.scheduleJob('*/11 * * * *', () => {
 			if(IsProcessing === true) {

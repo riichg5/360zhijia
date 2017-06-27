@@ -5,7 +5,8 @@ module.exports = {
 		_360BBS: "360BBS",
 		_ruixing: "ruixing",
 		_qq: "QQ",
-		_jinshan: "金山"
+		_jinshan: "金山",
+		_aiduba: "爱毒霸"
 	},
 
 	PRIORITY: {

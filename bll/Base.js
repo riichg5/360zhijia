@@ -350,6 +350,30 @@ class Base {
 		return `${siteUrl}${categoryName}/${postId}.html`;
 	}
 
+	requestPageUrl (opts) {
+		let self = this;
+		let context = self.context;
+		let url = opts.url;
+		let needRequestPageUrl = _config.get('needRequestPageUrl');
+
+		return _co(function* () {
+			if(!needRequestPageUrl) {
+				return;
+			}
+
+			let startTime = new Date();
+			yield request(url).then(function (htmlString) {
+				let endTime = new Date();
+				let usedTime = endTime - startTime;
+				self.logger.debug(`request ${url} success, used time: ${usedTime}`);
+		    }).catch(function (error) {
+				let endTime = new Date();
+				let usedTime = endTime - startTime;
+		    	self.logger.debug(`request ${url} failed, used time: ${usedTime}, error: ${error.message}`);
+		    });
+		});
+	}
+
 	pushUri (opts) {
 		let self = this;
 		let context = self.context;
@@ -368,8 +392,9 @@ class Base {
 	        let baiduMipPageUrl = self.getBaiduMipPageUri({postId: postId, categoryName: categoryName});
 
 	        yield [
+	        	self.requestPageUrl({url: pageUrl}),
 	        	bPush.pushToAll({uri: pageUrl}),
-	        	bPush.pushToBaiduMip({uri: baiduMipPageUrl})
+	        	// bPush.pushToBaiduMip({uri: baiduMipPageUrl})
 	        ];
 		});
 	}
