@@ -394,7 +394,7 @@ class Base {
 	        yield [
 	        	self.requestPageUrl({url: pageUrl}),
 	        	bPush.pushToAll({uri: pageUrl}),
-	        	// bPush.pushToBaiduMip({uri: baiduMipPageUrl})
+	        	bPush.pushToBaiduMip({uri: baiduMipPageUrl})
 	        ];
 		});
 	}
