@@ -16,6 +16,7 @@ class QQ extends Base {
 		let superCreateMsg = super.createMsg.bind(self);
 		let context = self.context;
 
+		return _resolve();
 		_.each(configs, item => {
 			item.IsProcessing = false;
 			self.schedule.scheduleJob(item.cron, () => {
@@ -45,7 +46,6 @@ class QQ extends Base {
 							return;
 						}
 					});
-					return;
 				}).then(res => {
 					let endTime = new Date().getTime();
 					self.logger.info(`job type: ${self.type}:${item.name} is over. used time:`, Math.round((endTime - startTime) / 1000));
