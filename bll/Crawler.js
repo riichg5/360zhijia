@@ -16,7 +16,7 @@ class Crawler extends Base {
 	    return _co(function *() {
 	    	let redisKey = `super360_${uri}`;
 		    let valOfKey = yield self.BLL.Cache.get({key: redisKey});
-		    self.logger.debug("Key in redis:", valOfKey);
+		    self.logger.debug(`the key is in redis: ${redisKey}`);
 		    if(valOfKey) {
 		    	return true;
 		    }

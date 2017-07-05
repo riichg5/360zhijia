@@ -35,6 +35,15 @@ class AiDuBa extends Base {
         this.firstThreadUri = "";
 	}
 
+    loadUri (opts) {
+        let uri = opts.uri;
+
+        return super.loadUri({
+            uri: uri,
+            charset: 'GBK'
+        });
+    }
+
     //出口方法
     begin (opts)  {
         let self = this;
@@ -106,8 +115,13 @@ class AiDuBa extends Base {
     }
 
     getForumTitle ($) {
-        let title = $("a.forum-title").text();
+        let breadcrumbs = $("#pt").find("a");
 
+        if(breadcrumbs.length < 2) {
+            return null;
+        }
+
+        let title = breadcrumbs.eq(breadcrumbs.length - 1).text();
         this.logger.debug(`forum title is: ${title}`);
         return title;
     }
@@ -119,8 +133,8 @@ class AiDuBa extends Base {
             return null;
         }
 
-        let title = breadcrumbs.eq(breadcrumbs.length - 2).text();
-        this.logger.debug(`thread title is: ${title}`);
+        let title = breadcrumbs.eq(2).text();
+        this.logger.debug(`forum title is: ${title}`);
         return title;
     }
 
@@ -164,6 +178,7 @@ class AiDuBa extends Base {
         let context = self.context;
         let pageText = $("span[title^='共']").eq(0);
 
+        self.logger.debug("---------------->", $("span[title^='共']").html());
         if(pageText && pageText.length !== 0) {
             let maxPage = parseInt(_.trim(pageText.text().replace(/页/gi,"").replace(/\//gi, "")), 10);
             self.logger.debug(`current page count: ${maxPage}`);
@@ -209,10 +224,14 @@ class AiDuBa extends Base {
         return splits.join('&');
     }
 
+    get resolveTexts () {
+        return ['已经回复', '论坛贴士', '版本发布', '论坛公告', '已经解决'];
+    }
+
     getForumResolvedUris ($) {
         let self = this;
         let context = self.context;
-        $("span[title^='共']").eq(0);
+        // $("span[title^='共']").eq(0);
         let posts = $("tbody[id^='normalthread_']");
         let uris = [];
 
@@ -221,14 +240,16 @@ class AiDuBa extends Base {
             let post = posts.eq(i);
             let href = post.find("a[href^='forumtype']");
 
-            if(href.length) {
+            self.logger.debug(`href.eq(0).find('font').eq(0).text():`, href.eq(0).find('font').eq(0).text());
+            if(href.length && self.resolveTexts.indexOf(href.eq(0).find('font').eq(0).text()) !== -1) {
                 let postLink = href.eq(0);
                 if(postLink) {
-                    uris.push(self.getPureUri(self.getUrlByPath(postLink.attr("href"))));
+                    self.logger.debug(`self.getUrlByPath(postLink.parent().nextAll('a').eq(0).attr("href"))):`, self.getUrlByPath(postLink.parent().nextAll('a').eq(0).attr("href")));
+                    uris.push(self.getPureUri(self.getUrlByPath(postLink.parent().nextAll('a').eq(0).attr("href"))));
                 }
             }
         }
-        return uris;
+         return uris;
     }
 
     getForumPageUrl (opts) {
@@ -248,20 +269,10 @@ class AiDuBa extends Base {
         let self = this;
         let url = opts.pageUrl;
         let pageNum = opts.pageNum;
+        let splits = url.split('-');
 
-        //url格式： http://bbs.guanjia.qq.com/forum.php?mod=viewthread&tid=5286673&extra=page%3D1&page=3
-        if(url.indexOf('&page=') === -1) {
-            return `${url}&page=${pageNum}`;
-        } else {
-            let splits = url.split("&");
-            for(let i=0; i<splits.length; i++) {
-                if(splits[i].indexOf('page=') !== -1) {
-                    splits[i] = `page=${pageNum}`;
-                    break;
-                }
-            }
-            return splits.join('&');
-        }
+        splits[2] = `${pageNum}`;
+        return splits.join('-');
     }
 
     getPostDivs (opts) {
@@ -322,6 +333,8 @@ class AiDuBa extends Base {
         $div.find("div[class='po phoneversion']").remove(); //删除来之XXX版本手机终端
         $div.find("dl[class='rate']").remove();  //删除首帖下面的评分信息
         $div.find("p[class='mbn']").remove();
+        $div.find(".attach_nopermission").remove();
+
     }
 
     isWorkerReply (opts) {
@@ -329,12 +342,12 @@ class AiDuBa extends Base {
         let context = self.context;
         let $div = opts.$div;
 
-        let content = $div.find("font").text();
+        let content = $div.find('.cl a').eq(2).text();
         self.logger.debug(`content: ${content}`);
         let indexOf = [
-            '论坛版主'
+            '论坛版主', '工作人员'
         ].indexOf(content);
-        self.logger.debug(`['论坛版主'] indexOf is: ${indexOf}`);
+        // self.logger.debug(`['论坛版主'] indexOf is: ${indexOf}`);
 
         return indexOf > -1;
     }

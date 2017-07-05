@@ -10,6 +10,7 @@ let url = require('url');
 let mkdirp = require('mkdirp');
 let Promise = require('bluebird');
 let imageInfo = require('image-info');
+let iconv = require('iconv-lite');
 
 class Base {
 	constructor(context) {
@@ -37,14 +38,28 @@ class Base {
 		let self = this;
 		let context = self.context;
 		let uri = opts.uri;
-        let requestOpt = {
-            uri: uri,
-            transform: function (body) {
-                return cheerio.load(body);
-            }
-        };
+		let charset = opts.charset;
+        let requestOpt = {};
 
-        return _co(function *() {
+        if(charset) {
+			requestOpt = {
+	            uri: uri,
+	            transform: function (body) {
+	            	body = iconv.decode(body, charset);
+	                return cheerio.load(body);
+	            }
+	        };
+	        requestOpt.encoding = null;
+        } else {
+			requestOpt = {
+	            uri: uri,
+	            transform: function (body) {
+	                return cheerio.load(body);
+	            }
+	        };
+        }
+
+        return _co(function* () {
         	self.logger.debug("start request requestOpt.uri:", requestOpt.uri);
         	let $ = yield request(requestOpt);
         	return $;

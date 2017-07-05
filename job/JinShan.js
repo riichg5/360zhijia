@@ -16,7 +16,7 @@ class Job extends Base {
 		let superCreateMsg = super.createMsg.bind(self);
 
 		//每小时57分
-		self.schedule.scheduleJob('*/57 * * * *', () => {
+		self.schedule.scheduleJob('*/13 * * * *', () => {
 			if(IsProcessing === true) {
 				self.logger.debug(`job ${self.type} is running, can not run again.`);
 				return;

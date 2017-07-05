@@ -233,29 +233,52 @@ class QQ extends Base {
 
     getForumPageUrl (opts) {
         let self = this;
+        let pageNum = opts.pageNum;
+        let pageUrl = opts.pageUrl;
+        let s1, s2, s3, num, suffix;
 
-        return self.getThreadPageUrl(opts);
+        [s1, s2, s3] =  pageUrl.split('-');
+        [num, suffix] = s3.split('.');
+
+        s3 = `${pageNum}.${suffix}`;
+        return [s1, s2, s3].join("-");
     }
 
     getThreadPageUrl (opts) {
         let self = this;
         let url = opts.pageUrl;
         let pageNum = opts.pageNum;
+        let splits = url.split('-');
 
-        //url格式： http://bbs.guanjia.qq.com/forum.php?mod=viewthread&tid=5286673&extra=page%3D1&page=3
-        if(url.indexOf('&page=') === -1) {
-            return `${url}&page=${pageNum}`;
-        } else {
-            let splits = url.split("&");
-            for(let i=0; i<splits.length; i++) {
-                if(splits[i].indexOf('page=') !== -1) {
-                    splits[i] = `page=${pageNum}`;
-                    break;
-                }
-            }
-            return splits.join('&');
-        }
+        splits[2] = `${pageNum}`;
+        return splits.join('-');
     }
+
+    // getForumPageUrl (opts) {
+    //     let self = this;
+
+    //     return self.getThreadPageUrl(opts);
+    // }
+
+    // getThreadPageUrl (opts) {
+    //     let self = this;
+    //     let url = opts.pageUrl;
+    //     let pageNum = opts.pageNum;
+
+    //     //url格式： http://bbs.guanjia.qq.com/forum.php?mod=viewthread&tid=5286673&extra=page%3D1&page=3
+    //     if(url.indexOf('&page=') === -1) {
+    //         return `${url}&page=${pageNum}`;
+    //     } else {
+    //         let splits = url.split("&");
+    //         for(let i=0; i<splits.length; i++) {
+    //             if(splits[i].indexOf('page=') !== -1) {
+    //                 splits[i] = `page=${pageNum}`;
+    //                 break;
+    //             }
+    //         }
+    //         return splits.join('&');
+    //     }
+    // }
 
     getPostDivs (opts) {
         let $ = opts.$;

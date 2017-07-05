@@ -5,7 +5,7 @@
 		"uri": "http://bbs.duba.net/forum-6577-1.html",
 		"needReply": true,
 		"priority": "normal",
-		"cron": "37 */2 * * *",
+		"cron": "*/1 * * * * *",
 		"tagIds": [504, 77],
 		"categoryId": 504,
 		"deepPageCount": 10,

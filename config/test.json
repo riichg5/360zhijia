@@ -7,6 +7,6 @@
     "push": {
         "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=xMDevGvrZlHfRZYy"
     },
-    "testJobs": ["JinShan.js"],
+    "testJobs": ["QQ.js"],
     "needRequestPageUrl": false
 }

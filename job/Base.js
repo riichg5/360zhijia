@@ -32,12 +32,13 @@ class Base {
 	    let priority = opts.priority || CONST.PRIORITY.NORMAL;
 
 	    return _co(function* () {
-	    	self.logger.debug("start create message of job:", self.type);
+	    	self.logger.debug("start create message of job:", self.type, ' uri is:', uri);
 		    //查询是否已经处理过了
 		    let bCrawler = self.BLL.createCrawler(context);
 		    let isProcessed = yield bCrawler.isProcessed(uri);
 
 		    if(isProcessed === true) {
+		    	self.logger.debug(`already processed: ${uri}`);
 		    	return;
 		    }
 
