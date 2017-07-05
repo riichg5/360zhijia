@@ -16,7 +16,6 @@ class QQ extends Base {
 		let superCreateMsg = super.createMsg.bind(self);
 		let context = self.context;
 
-		return _resolve();
 		_.each(configs, item => {
 			item.IsProcessing = false;
 			self.schedule.scheduleJob(item.cron, () => {
