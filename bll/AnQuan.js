@@ -75,6 +75,7 @@ class AnQuan extends Base {
             info.$content.find("#article_box h2").eq(0).remove();
             info.$content.find(".article-msg").remove();
             info.$content.find("hr").remove();
+            info.$content.find("a[href$='weixin.jpeg']").parent().remove();
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content});
