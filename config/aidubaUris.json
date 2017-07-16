@@ -1,14 +1,14 @@
 [
 	{
 		"name": "猎豹浏览器",
-		"aliasName": "爱毒霸",
+		"aliasName": "猎豹浏览器",
 		"uri": "http://bbs.duba.net/forum-6577-1.html",
 		"needReply": true,
 		"priority": "normal",
-		"cron": "*/1 * * * * *",
+		"cron": "58 */2 * * *",
 		"tagIds": [504, 77],
 		"categoryId": 504,
-		"deepPageCount": 10,
+		"deepPageCount": 12,
 		"keyWords": ["猎豹", "浏览器"],
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/06/liebao.jpeg\"><img class=\"aligncenter size-medium wp-image-238097\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/06/liebao-300x211.jpeg\" alt=\"猎豹浏览器\" width=\"300\" height=\"211\" /></a>"
 	}

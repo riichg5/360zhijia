@@ -277,7 +277,8 @@ class AiDuBa extends Base {
 
     getPostDivs (opts) {
         let $ = opts.$;
-        return $("#postlist").children("div[id*=post_]");
+
+        return $("div[id^=post_]");
     }
 
     //保留strong标签内容
@@ -328,13 +329,13 @@ class AiDuBa extends Base {
         $div.find("em[class=xg1]").remove();    //删除用户帖子上传图片说明
         $div.find("div[class=tip_c]").remove(); //删除用户帖子上传图片说明
         $div.find("div[class='tip tip_4 aimg_tip'][disautofocus='true']").remove(); //删除智能社区图片下面的下载和上传信息
+        $div.find("div[class='tip tip_4']").remove();
         $div.find("div[class='modact']").remove();  //删除智能社区添加图章的内容
         $div.find("div[class='article-functions']").remove(); //删除结尾回复 评论 点赞等
         $div.find("div[class='po phoneversion']").remove(); //删除来之XXX版本手机终端
         $div.find("dl[class='rate']").remove();  //删除首帖下面的评分信息
         $div.find("p[class='mbn']").remove();
         $div.find(".attach_nopermission").remove();
-
     }
 
     isWorkerReply (opts) {
@@ -342,14 +343,21 @@ class AiDuBa extends Base {
         let context = self.context;
         let $div = opts.$div;
 
-        let content = $div.find('.cl a').eq(2).text();
+        let content = $div.find('.i em').text();
         self.logger.debug(`content: ${content}`);
         let indexOf = [
             '论坛版主', '工作人员'
         ].indexOf(content);
-        // self.logger.debug(`['论坛版主'] indexOf is: ${indexOf}`);
 
-        return indexOf > -1;
+        let isWorker = false;
+        for(let item of ['论坛版主', '工作人员']) {
+            if(content.indexOf(item) !== -1) {
+                isWorker = true;
+                break;
+            }
+        }
+
+        return isWorker;
     }
 
     quoteContentFormat (opts) {
@@ -620,6 +628,14 @@ class AiDuBa extends Base {
             let divContents = [];
 
             for(var i=0; i<maxPostNum; i++) {
+                let item = postDivs.eq(i);
+                let id = item.attr('id');
+                let splits = id.split('_');
+
+                if(splits.length !== 2 || !/^\d+$/.test(splits[1])) {
+                    continue;
+                }
+
                 let content = yield self.getPostContent({
                     $div: postDivs.eq(i),
                     divIndex: i,
@@ -631,6 +647,36 @@ class AiDuBa extends Base {
 
             return divContents;
         });
+    }
+
+    formatFirstContent (html) {
+        let self = this;
+        let $content = cheerio.load(html);
+        let $ps = $content('p');
+        let $dest = null;
+        let index = null;
+
+        $ps.each((i) => {
+            if(!$dest) {
+                self.logger.debug(`this.text(): `, $ps.eq(i).text());
+                if($ps.eq(i).text().indexOf('问题反馈') !== -1) {
+                    index = i;
+                    $dest = this;
+                }
+            }
+        });
+
+        if($dest) {
+            $ps.eq(index+1).text(self.removeEmptyStr($ps.eq(index+1).text() + $ps.eq(index+2).text()));
+            $ps.eq(index+2).remove();
+            $ps.eq(index+3).text(self.removeEmptyStr($ps.eq(index+3).text() + $ps.eq(index+4).text()));
+            $ps.eq(index+4).remove();
+            $ps.eq(index+5).text(self.removeEmptyStr($ps.eq(index+5).text() + $ps.eq(index+6).text()));
+            $ps.eq(index+6).remove();
+            return $content.html();
+        }
+
+        return html;
     }
 
     getCommonPageHtml (pageContents) {
@@ -646,7 +692,7 @@ class AiDuBa extends Base {
                 let pageContentIndex = contentNum - 1;
                 self.logger.debug(`pageNum: ${pageNum}, pageContentIndex: ${pageContentIndex} contentNum: ${contentNum}`);
                 if(pageNum === 1 && contentNum === 1) {
-                    firstContent += '<p>' + pageContents[pageNum][pageContentIndex] + '</p>';
+                    firstContent += self.formatFirstContent('<p>' + pageContents[pageNum][pageContentIndex] + '</p>');
                 } else if(pageNum === 1 && contentNum === 2) {
                     applyAmount += 1;
                     replyAmountContent = `<p>&nbsp;</p><p><strong>共有[[replyAmound]]个回复供您参考:</strong></p>`;
@@ -732,9 +778,7 @@ class AiDuBa extends Base {
             info.content = self.addTopImg({content: info.content});
 
             //不需要恢复的话，则需要设置摘要
-            // if(!config.needReply) {
-                info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
-            // }
+            info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
 
             return info;
         });

@@ -279,12 +279,14 @@ class Base {
 	}
 
 	removeEmptyStr (text) {
-		text = text.replace(/^(\n\r)+/g, "");
-    	text = text.replace(/(\n\r)+$/g, "");
+    	text = text.replace(/\r/gi, "");
+    	text = text.replace(/\n/gi, "");
     	text = text.replace(/(&nbsp;)/gi, "");
-    	text = text.replace(/^(\s)+/g, "");
-    	text = text.replace(/(<br\/>)/gi, "");
-    	text = text.replace(/(<br>)/gi, "");
+    	text = text.replace(/\s/gi, "");
+    	text = text.replace(/<br\/>/gi, "");
+    	text = text.replace(/<br>/gi, "");
+    	text = text.replace(/<p>/gi, "");
+    	text = text.replace(/<p\/>/gi, "");
 		return text;
 	}
 
@@ -346,7 +348,26 @@ class Base {
 	}
 
 	getExcerpt (text) {
-		return this.removeEmptyStr(text).substring(0, _config.get("excerptLength"));
+		let len = _config.get("excerptLength") - 5;
+		let maxLen = len + 20;
+		let textLen = text.length;
+		let pureStr = this.removeEmptyStr(text);
+		let str = pureStr.substring(0, len);
+		let flags = ['。','.','!','?','..',';','，',',',':'];
+
+		// for(let i = len; i < maxLen && i < textLen; i++) {
+		// 	if(overFlag.indexOf(str[str.length - 1]) !== -1) {
+		// 		break;
+		// 	}
+
+		// 	str += text[i];
+		// }
+
+		if(flags.indexOf(str[str.length - 1]) !== -1) {
+			return str;
+		}
+
+		return str + '...';
 	}
 
 	getPageUri (opts) {
@@ -396,6 +417,12 @@ class Base {
 
 		return _co(function* () {
 	        //push
+
+            if(process.env.NODE_ENV !== 'production') {
+                self.logger.debug("not production NODE_ENV, no need push url.");
+                return;
+            }
+
 	        let bPush = self.BLL.createPush(context);
 	        let dWp360Term = self.DAL.createWp360Term(context);
 	        let categoryName = yield dWp360Term.getCategoryName(self.categoryId);
