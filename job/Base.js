@@ -50,7 +50,7 @@ class Base {
            	.backoff(function(attempts, delay){
            		return attempts * 1000 * 60 * 15;  //add 15 minutes
             })
-           	.ttl(15 * 1000);
+           	.ttl(5 * 60 * 1000);		//5分钟超时
 
 		    let saveJob = Promise.promisify(job.save).bind(job);
 		    yield saveJob();

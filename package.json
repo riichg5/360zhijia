@@ -31,7 +31,7 @@
     "continuation-local-storage": "^3.2.0",
     "iconv-lite": "^0.4.18",
     "image-info": "0.0.2",
-    "kue": "^0.11.5",
+    "kue": "^0.11.6",
     "lodash": "^4.17.3",
     "mkdirp": "^0.5.1",
     "moment": "^2.17.1",
