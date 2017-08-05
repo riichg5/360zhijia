@@ -84,7 +84,9 @@ class BBS extends Base {
 
 			self.logger.debug("start excute job, data is: ", uri);
 
-			yield bBBS.procArticle({uri: uri, needReply: needReply});
+			yield context.models.transaction(() => {
+				return bBBS.procArticle({uri: uri, needReply: needReply});
+			});
 			return;
 		});
 	}

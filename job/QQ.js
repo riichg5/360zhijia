@@ -83,7 +83,9 @@ class QQ extends Base {
 
 			self.logger.debug("start excute job, data is: ", uri);
 
-			yield bQQ.procArticle({uri: uri, needReply: needReply});
+			yield context.models.transaction(() => {
+				return bQQ.procArticle({uri: uri, needReply: needReply});
+			});
 			return;
 		});
 	}

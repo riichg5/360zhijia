@@ -65,7 +65,9 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bJinshan = self.BLL.createJinShan(context);
 
-			yield bJinshan.procArticle({uri: uri});
+			yield context.models.transaction(() => {
+				return bJinshan.procArticle({uri: uri});
+			});
 			return;
 		});
 	}

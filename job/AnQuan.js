@@ -64,7 +64,9 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bAnQuan = self.BLL.createAnQuan(context);
 
-			yield bAnQuan.procArticle({uri: uri});
+			yield context.models.transaction(() => {
+				return bAnQuan.procArticle({uri: uri});
+			});
 			return;
 		});
 	}

@@ -65,7 +65,9 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bRuiXing = self.BLL.createRuiXing(context);
 
-			yield bRuiXing.procArticle({uri: uri});
+			yield context.models.transaction(() => {
+				return bRuiXing.procArticle({uri: uri});
+			});
 			return;
 		});
 	}

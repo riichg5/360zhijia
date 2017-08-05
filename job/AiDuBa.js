@@ -85,7 +85,9 @@ class AiDuBa extends Base {
 
 			self.logger.debug("start excute job, data is: ", uri);
 
-			yield bAiDuBa.procArticle({uri: uri, needReply: needReply});
+			yield context.models.transaction(() => {
+				return bAiDuBa.procArticle({uri: uri, needReply: needReply});
+			});
 			return;
 		});
 	}
