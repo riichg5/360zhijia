@@ -65,7 +65,7 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bJinshan = self.BLL.createJinShan(context);
 
-			yield context.models.transaction(() => {
+			yield context.sequelize.transaction(() => {
 				return bJinshan.procArticle({uri: uri});
 			});
 			return;

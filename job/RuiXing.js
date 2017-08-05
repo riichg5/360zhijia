@@ -65,7 +65,7 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bRuiXing = self.BLL.createRuiXing(context);
 
-			yield context.models.transaction(() => {
+			yield context.sequelize.transaction(() => {
 				return bRuiXing.procArticle({uri: uri});
 			});
 			return;

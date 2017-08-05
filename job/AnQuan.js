@@ -64,7 +64,7 @@ class Job extends Base {
 			let uri = job.data.uri;
 			let bAnQuan = self.BLL.createAnQuan(context);
 
-			yield context.models.transaction(() => {
+			yield context.sequelize.transaction(() => {
 				return bAnQuan.procArticle({uri: uri});
 			});
 			return;

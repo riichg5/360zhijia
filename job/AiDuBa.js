@@ -85,7 +85,7 @@ class AiDuBa extends Base {
 
 			self.logger.debug("start excute job, data is: ", uri);
 
-			yield context.models.transaction(() => {
+			yield context.sequelize.transaction(() => {
 				return bAiDuBa.procArticle({uri: uri, needReply: needReply});
 			});
 			return;

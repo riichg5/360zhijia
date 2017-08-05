@@ -83,7 +83,7 @@ class QQ extends Base {
 
 			self.logger.debug("start excute job, data is: ", uri);
 
-			yield context.models.transaction(() => {
+			yield context.sequelize.transaction(() => {
 				return bQQ.procArticle({uri: uri, needReply: needReply});
 			});
 			return;
