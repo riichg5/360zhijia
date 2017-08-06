@@ -45,16 +45,16 @@ class Article extends Base {
 				post_content_filtered: '',
 			};
 
-			let dWp360PostMeta = self.DAL.createWp360PostMeta(context);
+			// let dWp360PostMeta = self.DAL.createWp360PostMeta(context);
 			let dWp360TermRelationship = self.DAL.createWp360TermRelationship(context);
 
 			let post = yield self.dal.create(postModel);
 			self.logger.debug("post:", post.get({plain: true}));
-			yield dWp360PostMeta.create({
-				post_id: post.id,
-				meta_key: 'views',
-				meta_value: Math.round(Math.random() * 200)
-			});
+			// yield dWp360PostMeta.create({
+			// 	post_id: post.id,
+			// 	meta_key: 'views',
+			// 	meta_value: Math.round(Math.random() * 200)
+			// });
 
 			let models = [];
 			_.each(tagIds, (id) => {
