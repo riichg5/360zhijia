@@ -6,11 +6,13 @@ module.exports = {
 		_ruixing: "ruixing",
 		_qq: "QQ",
 		_jinshan: "金山",
-		_aiduba: "爱毒霸"
+		_aiduba: "爱毒霸",
+		_dailyCheck: "每日检查",
 	},
 
 	PRIORITY: {
-		NORMAL: 'normal'
+		NORMAL: 'normal',
+		CRITICAL: 'critical'
 	},
 
 	WORDS: ['共产党', '政府', '法轮功', '学潮', '腐败', '习近平', '江泽民', '政变', '性交', '做爱', '艹', 'fuck']

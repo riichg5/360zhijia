@@ -27,6 +27,10 @@ class Crawler extends Base {
 		let context = self.context;
 
 	    return _co(function* () {
+	    	if(!uri) {
+	    		return false;
+	    	}
+
 	    	let redisKey = `super360_${uri}`;
 		    let valOfKey = yield self.BLL.Cache.get({key: redisKey});
 

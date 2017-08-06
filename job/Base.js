@@ -30,6 +30,7 @@ class Base {
 	    let title = data.title;
 	    let uri = data.uri;
 	    let priority = opts.priority || CONST.PRIORITY.NORMAL;
+	    let ttl = opts.ttl || 5 * 60 * 1000;		//默认5分钟超时
 
 	    return _co(function* () {
 	    	self.logger.debug("start create message of job:", self.type, ' uri is:', uri);
@@ -50,7 +51,7 @@ class Base {
            	.backoff(function(attempts, delay){
            		return attempts * 1000 * 60 * 15;  //add 15 minutes
             })
-           	.ttl(5 * 60 * 1000);		//5分钟超时
+           	.ttl(ttl);
 
 		    let saveJob = Promise.promisify(job.save).bind(job);
 		    yield saveJob();
