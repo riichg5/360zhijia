@@ -2,14 +2,18 @@ let Base = require('./Base');
 let Promise = require('bluebird');
 let moment = require('moment');
 let cheerio = require('cheerio');
-let uriConfigs = require(_base + 'config/aidubaUris.json').concat(require(_base + 'config/bbsUris.json')).concat(require(_base + 'config/qqUris.json'));
-let imgStrings = _.map(uriConfigs, 'img').join("||||");
 let fs = require('fs');
 
 class Article extends Base {
 	constructor(context) {
 		super(context);
 		this.dal = this.DAL.createArticle(context);
+
+		let uriConfigs = require(_base + 'config/aidubaUris.json').concat(require(_base + 'config/bbsUris.json')).concat(require(_base + 'config/qqUris.json'));
+		this.imgStrings = _.map(uriConfigs, 'img');
+		this.imgStrings.push(this.BLL.createRuiXing(context).defaultImg);
+		this.imgStrings.push(this.BLL.createJinShan(context).defaultImg);
+		this.imgStrings = this.imgStrings.join("||||");
 	}
 
 	addOne (opts) {
@@ -96,7 +100,7 @@ class Article extends Base {
 
 		for(let i=0; i<$srcs.length; i++) {
 			let src = $srcs.eq(i).attr('src');
-			if(imgStrings.indexOf(src) === -1) {
+			if(self.imgStrings.indexOf(src) === -1) {
 				//开始移除图片
 				let picPath = self.getImgPath(src);
 				self.logger.debug(`start remove pic: ${picPath}`);

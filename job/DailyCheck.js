@@ -56,7 +56,6 @@ class BBS extends Base {
 				self.logger.error("stack:", error.stack);
 			});
 		// });
-
 	}
 
 	excute (opts) {

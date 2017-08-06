@@ -29,7 +29,8 @@ class DailyCheck extends Base {
 
 		let bArticle = self.BLL.createArticle(context);
 		await bArticle.processDuplicateArticles({
-			startDate: moment('2017-05-01 00:00:00').toDate()
+			startDate: moment('2017-04-01 00:00:00').toDate()
+			// startDate: moment().add(-5, 'days').toDate()
 		});
 	}
 }
