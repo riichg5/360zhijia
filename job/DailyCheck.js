@@ -18,7 +18,7 @@ class BBS extends Base {
 		let context = self.context;
 
 		item.IsProcessing = false;
-		// self.schedule.scheduleJob("30 4 * * *", () => {
+		self.schedule.scheduleJob("30 4 * * *", () => {
 			if(item.IsProcessing === true) {
 				self.logger.debug(`job type: ${self.type}:${item.name} is running, can not run again.`);
 				return;
@@ -55,7 +55,7 @@ class BBS extends Base {
 				self.logger.error("error:", error.message);
 				self.logger.error("stack:", error.stack);
 			});
-		// });
+		});
 	}
 
 	excute (opts) {
