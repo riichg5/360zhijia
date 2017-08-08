@@ -6,7 +6,7 @@
 		"needReply": true,
 		"priority": "normal",
 		"cron": "43 */1 * * *",
-		"tagIds": [500, 502],
+		"tagIds": [500],
 		"categoryId": 500,
 		"deepPageCount": 6,
 		"keyWords": ["腾讯", "管家"],

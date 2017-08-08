@@ -5,7 +5,7 @@
 		"needReply": true,
 		"priority": "normal",
 		"cron": "*/5 * * * * *",
-		"tagIds": [34, 497],
+		"tagIds": [34],
 		"categoryId": 34,
 		"deepPageCount": 100000,
 		"keyWords": ["360", "手机", "n5"],
