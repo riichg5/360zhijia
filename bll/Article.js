@@ -118,6 +118,7 @@ class Article extends Base {
 		let self = this, context = this.context;
 		let startDate = opts.startDate;
 
+		return; //临时不处理
 		let rows = await self.dal.getDuplicatePosts({
 			startDate: startDate,
 			limit: 100
