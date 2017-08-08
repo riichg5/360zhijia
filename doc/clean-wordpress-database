@@ -1,0 +1,7 @@
+
+文章地址 https://www.douban.com/note/235918678/
+
+正常的WordPress使用过程中，会不断产生这些数据，久而久之，就非常之庞大了。
+这时我们就要定时清理一下，优化也很简单，在PHPMyAdmin中的wp_options，执行下面mysql语句即可：
+
+DELETE FROM `wp_360_options` WHERE `option_name` LIKE ('_transient_%')
