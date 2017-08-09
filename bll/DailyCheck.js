@@ -32,6 +32,15 @@ class DailyCheck extends Base {
 			// startDate: moment('2017-04-01 00:00:00').toDate()
 			startDate: moment().add(-2, 'days').toDate()
 		});
+
+		let dWp360Option = self.DAL.createWp360Option(context);
+		await dWp360Option.destroy({
+			where: {
+				option_name: {
+					$like: '_transient_%'
+				}
+			}
+		});
 	}
 }
 
