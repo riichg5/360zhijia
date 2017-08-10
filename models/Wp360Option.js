@@ -13,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
 		    autoIncrement: true
 		}
     },{
-    	tableName: 'wp_360_option',
+    	tableName: 'wp_360_options',
     	timestamps: false
     });
 
