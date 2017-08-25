@@ -80,6 +80,7 @@ class AnQuan extends Base {
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content});
             info.content = self.filterHtml(replaceInfo.html);
+            info.content = info.content + `<p>本文出处：<a href='${uri}' target='_blank'>${uri}</a></p>`;
             info.excerpt = self.getExcerpt(info.$content.text());
 
             return info;
