@@ -7,7 +7,7 @@
     "push": {
         "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=xMDevGvrZlHfRZYy"
     },
-    "testJobs": ["DailyCheck.js"],
+    "testJobs": ["DongTai.js"],
     "needRequestPageUrl": false,
 	"cacheTTL": 10
 }
