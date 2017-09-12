@@ -1,5 +1,17 @@
 [
 	{
+		"name": "360手机vizza",
+		"uri": "http://bbs.360.cn/forum-7269-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "42 */10 * * *",
+		"tagIds": [34],
+		"categoryId": 34,
+		"deepPageCount": 12,
+		"keyWords": ["360", "手机", "vizza"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/09/vizza.jpg\"><img class=\"aligncenter wp-image-300615 size-medium\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/09/vizza-297x300.jpg\" alt=\"vizza\" width=\"297\" height=\"300\" /></a>"
+	},
+	{
 		"name": "360手机N5S",
 		"uri": "http://bbs.360.cn/forum-7224-1.html",
 		"needReply": true,
