@@ -3,6 +3,7 @@
 let Base = require('./Base');
 let cheerio = require('cheerio');
 let Promise = require('bluebird');
+let path = require('path');
 
 class DongTai extends Base {
 	constructor(context) {
@@ -22,8 +23,16 @@ class DongTai extends Base {
             let aLinks = $(".article-list ul").find('h2 a') ;
             let urls = [];
 
+            let baseNames = [];
             aLinks.each((i, link) => {
                 if(link && link.attribs && link.attribs.href) {
+                    let baseName = path.parse(link.attribs.href).base;
+                    if(baseNames.indexOf(baseName) !== -1) {
+                        return;
+                    }
+
+                    baseNames.push(baseName);
+
                     urls.push(link.attribs.href);
                 }
             });
