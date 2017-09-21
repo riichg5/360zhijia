@@ -1,5 +1,17 @@
 [
 	{
+		"name": "360快剪辑",
+		"uri": "http://bbs.360.cn/forum-7239-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "46 */10 * * *",
+		"tagIds": [34],
+		"categoryId": 34,
+		"deepPageCount": 15,
+		"keyWords": ["360", "快剪辑"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/09/kuaijianqie.jpg\"><img class=\"aligncenter size-medium wp-image-303762\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/09/kuaijianqie-300x155.jpg\" alt=\"\" width=\"300\" height=\"155\" /></a>"
+	},
+	{
 		"name": "360手机vizza",
 		"uri": "http://bbs.360.cn/forum-7269-1.html",
 		"needReply": true,
