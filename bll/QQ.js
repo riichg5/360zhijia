@@ -121,7 +121,7 @@ class QQ extends Base {
 
         let title = breadcrumbs.eq(breadcrumbs.length - 2).text();
         this.logger.debug(`thread title is: ${title}`);
-        return title;
+        return title.trim();
     }
 
     getConfigByThreadTitle (opts) {

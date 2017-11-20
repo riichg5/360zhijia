@@ -135,7 +135,7 @@ class AiDuBa extends Base {
 
         let title = breadcrumbs.eq(2).text();
         this.logger.debug(`forum title is: ${title}`);
-        return title;
+        return title.trim();
     }
 
     getConfigByThreadTitle (opts) {

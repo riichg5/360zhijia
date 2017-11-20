@@ -121,7 +121,7 @@ class BBS extends Base {
 
         let title = breadcrumbs.eq(breadcrumbs.length - 1).text();
         this.logger.debug(`thread title is: ${title}`);
-        return title;
+        return title.trim();
     }
 
     getConfigByThreadTitle (opts) {
