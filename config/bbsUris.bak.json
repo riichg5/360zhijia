@@ -12,6 +12,18 @@
 		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/09/kuaijianqie.jpg\"><img class=\"aligncenter size-medium wp-image-303762\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/09/kuaijianqie-300x155.jpg\" alt=\"\" width=\"300\" height=\"155\" /></a>"
 	},
 	{
+		"name": "360手机N6Pro",
+		"uri": "http://bbs.360.cn/forum-7421-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "7 */2 * * *",
+		"tagIds": [34],
+		"categoryId": 34,
+		"deepPageCount": 12,
+		"keyWords": ["360", "手机", "N6"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/11/N6-Pro.jpg\"><img class=\"aligncenter size-medium wp-image-323660\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/11/N6-Pro-300x159.jpg\" alt=\"\" width=\"300\" height=\"159\" /></a>"
+	},
+	{
 		"name": "360手机vizza",
 		"uri": "http://bbs.360.cn/forum-7269-1.html",
 		"needReply": true,
