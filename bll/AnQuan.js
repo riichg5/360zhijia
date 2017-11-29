@@ -95,6 +95,7 @@ class AnQuan extends Base {
             });
 
             info.title = res.title;
+            self.logger.debug(`============>res.content: ${res.content}`);
             info.$content = cheerio.load(res.content).root();
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
