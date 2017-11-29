@@ -38,6 +38,7 @@
     "mysql": "^2.12.0",
     "node-schedule": "^1.2.0",
     "node-uuid": "^1.4.7",
+    "phantom": "^4.0.9",
     "redis": "^2.6.5",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",

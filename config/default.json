@@ -74,6 +74,10 @@
         "css": "/wp-content/themes/super360/shCoreDefault.css",
         "js": "/wp-content/themes/super360/shCore.js"
     },
+    "highlightjs": {
+        "css": "/wp-content/themes/super360/highlight.js.css",
+        "js": "/wp-content/themes/super360/highlight.min.js"
+    },
     "needRequestPageUrl": true,
     "testJobs": []
 }

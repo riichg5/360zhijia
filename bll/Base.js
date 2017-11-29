@@ -39,6 +39,7 @@ class Base {
 		let context = self.context;
 		let uri = opts.uri;
 		let charset = opts.charset;
+		let isJsonResponse = opts.isJsonResponse;
         let requestOpt = {};
 
         if(charset) {
@@ -60,9 +61,43 @@ class Base {
         }
 
         return _co(function* () {
-        	self.logger.debug("start request requestOpt.uri:", requestOpt.uri);
+        	self.logger.debug("start request requestOpt: ", JSON.stringify(requestOpt));
         	let $ = yield request(requestOpt);
         	return $;
+        });
+	}
+
+	loadJSON (opts) {
+		let self = this;
+		let context = self.context;
+		let uri = opts.uri;
+		let charset = opts.charset;
+        let requestOpt = {};
+
+        if(charset) {
+			requestOpt = {
+	            uri: uri,
+	            transform: function (body) {
+	            	body = iconv.decode(body, charset);
+	                return body;
+	            },
+	            json: true
+	        };
+	        requestOpt.encoding = null;
+        } else {
+			requestOpt = {
+	            uri: uri,
+	            transform: function (body) {
+	                return body;
+	            },
+	            json: true
+	        };
+        }
+
+        return _co(function* () {
+        	self.logger.debug("start request requestOpt: ", JSON.stringify(requestOpt));
+        	let res = yield request(requestOpt);
+        	return res;
         });
 	}
 
@@ -249,9 +284,19 @@ class Base {
 		let self = this;
 		let context = self.context;
 		let $content = opts.$content;
-		let config = _config.get("syntaxHighlighter");
+
+		if($content.has("pre[class='pure-highlightjs']")) {
+			let config = _config.get("highlightjs");
+			self.logger.debug("find pure-highlightjs pre tag.");
+			$content.append(`<link href="${config.css}" rel="stylesheet">`);
+			$content.append(`<script type="text/javascript" src="${config.js}"></script>`);
+			$content.append(`<script>hljs.initHighlightingOnLoad();</script>`);
+			self.logger.debug("add css and js of highlightjs");
+			return;
+		}
 
 		if($content.has("pre")) {
+			let config = _config.get("syntaxHighlighter");
 			self.logger.debug("find syntaxHighlighter pre tag.");
 			$content.append(`<link type="text/css" media="all" href="${config.css}" rel="stylesheet">`);
 			$content.append(`<script type="text/javascript" src="${config.js}"></script>`);

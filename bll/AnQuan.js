@@ -6,28 +6,48 @@ let Promise = require('bluebird');
 class AnQuan extends Base {
 	constructor(context) {
 		super(context);
-        this.uri = "http://bobao.360.cn";
-        this.tagIds = [495, 496];
+        // this.uri = "https://api.anquanke.com/data/v1/post?id=";
+        this.tagIds = [495];
         this.categoryId = 495;
+        this.dal = this.DAL.createAnQuan(context);
 	}
+
+    getUri (id) {
+        return `https://api.anquanke.com/data/v1/post?id=${id}`;
+    }
 
     //出口方法
     getArticleList () {
-        let self = this;
-        let context = self.context;
+        let self = this, context = self.context;
 
-        return _co(function *() {
-            let $ = yield self.loadUri({uri: self.uri});
-            let aLinks = $(".newslist a[href*='bobao.360.cn']");
+        return _co(function* () {
+            let currentId = yield self.dal.getCurrentId();
+            let isExist = false;
             let urls = [];
 
-            aLinks.each((i, link) => {
-                if(link && link.attribs && link.attribs.href) {
-                    urls.push(link.attribs.href);
+            let lastId = currentId;
+            currentId += 1;
+            do {
+                let uri = self.getUri(currentId);
+                let res = yield self.loadJSON({
+                    uri: uri,
+                    isJsonResponse: true
+                });
+
+                if(res && res.id === currentId) {
+                    isExist = true;
+                    lastId = currentId;
+                    currentId += 1;
+                    urls.push(uri);
+                } else {
+                    isExist = false;
                 }
-            });
+            } while(isExist);
+
+            yield self.dal.updateCurrentId({currentId: lastId});
 
             urls = _.uniq(_.compact(urls));
+            self.logger.debug(`----> anquan urls: ${urls}`);
             return urls;
         });
     }
@@ -60,6 +80,7 @@ class AnQuan extends Base {
         let self = this;
         let context = self.context;
         let uri = opts.uri;
+        let id = uri.split('id=')[1];
         let info = {
             title: "",
             content: "",
@@ -68,20 +89,19 @@ class AnQuan extends Base {
         };
 
         return _co(function *(argument) {
-            let $ = yield self.loadUri({uri: uri});
+            let res = yield self.loadJSON({
+                uri: uri,
+                isJsonResponse: true
+            });
 
-            info.title = $("#article_box h2").eq(0).text();
-            info.$content = $("#article_box");
-            info.$content.find("#article_box h2").eq(0).remove();
-            info.$content.find(".article-msg").remove();
-            info.$content.find("hr").remove();
-            info.$content.find("img[src$='weixin.jpeg']").parent().remove();
+            info.title = res.title;
+            info.$content = cheerio.load(res.content).root();
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
-            let replaceInfo = yield self.procContentImgs({$html: info.$content});
+            let replaceInfo = yield self.procContentImgs({$html: info.$content, uri: uri});
             info.content = self.filterHtml(replaceInfo.html);
-            info.content = info.content + `<p>本文出处：<a href='${uri}' target='_blank'>${uri}</a></p>`;
-            info.excerpt = self.getExcerpt(info.$content.text());
+            info.content = info.content + `<p>本文来源于360安全客，原文地址：<a href='https://www.anquanke.com/post/id/${id}' target='_blank'>https://www.anquanke.com/post/id/${id}</a></p>`;
+            info.excerpt = res.desc; //self.getExcerpt(info.$content.text());
 
             return info;
         });
