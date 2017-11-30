@@ -16,40 +16,61 @@ class AnQuan extends Base {
         return `https://api.anquanke.com/data/v1/post?id=${id}`;
     }
 
+    getArticleListUri (id) {
+        return `https://api.anquanke.com/data/v1/posts?page=1&size=30`;
+    }
+
     //出口方法
     getArticleList () {
         let self = this, context = self.context;
 
         return _co(function* () {
-            let currentId = yield self.dal.getCurrentId();
-            let isExist = false;
+            let res = yield self.loadJSON({
+                uri: self.getArticleListUri(),
+                isJsonResponse: true
+            });
+
             let urls = [];
-
-            let lastId = currentId;
-            currentId += 1;
-            do {
-                let uri = self.getUri(currentId);
-                let res = yield self.loadJSON({
-                    uri: uri,
-                    isJsonResponse: true
-                });
-
-                if(res && res.id === currentId) {
-                    isExist = true;
-                    lastId = currentId;
-                    currentId += 1;
-                    urls.push(uri);
-                } else {
-                    isExist = false;
-                }
-            } while(isExist);
-
-            yield self.dal.updateCurrentId({currentId: lastId});
+            for(let item of res.data) {
+                let uri = self.getUri(item.id);
+                urls.push(uri);
+            }
 
             urls = _.uniq(_.compact(urls));
             self.logger.debug(`----> anquan urls: ${urls}`);
             return urls;
         });
+
+        // return _co(function* () {
+        //     let currentId = yield self.dal.getCurrentId();
+        //     let isExist = false;
+        //     let urls = [];
+
+        //     let lastId = currentId;
+        //     currentId += 1;
+        //     do {
+        //         let uri = self.getUri(currentId);
+        //         let res = yield self.loadJSON({
+        //             uri: uri,
+        //             isJsonResponse: true
+        //         });
+
+        //         if(res && res.id === currentId) {
+        //             isExist = true;
+        //             lastId = currentId;
+        //             currentId += 1;
+        //             urls.push(uri);
+        //         } else {
+        //             isExist = false;
+        //         }
+        //     } while(isExist);
+
+        //     yield self.dal.updateCurrentId({currentId: lastId});
+
+        //     urls = _.uniq(_.compact(urls));
+        //     self.logger.debug(`----> anquan urls: ${urls}`);
+        //     return urls;
+        // });
     }
 
     //excute 方法
