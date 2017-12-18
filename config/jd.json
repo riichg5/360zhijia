@@ -1,0 +1,44 @@
+{
+	"siteUrl": "http://www.myask.com.cn/",
+	"db": {
+        "protocol" : "tcp",
+        "host" : "localhost",
+        "port" : 3306,
+        "username" : "root",
+        "password" : "123",
+        "name" : "dwxw",
+        "pool" : {
+            "min" : 1,
+            "max" : 50
+        },
+        "sequelize" : {
+            "dialect" : "mysql",
+            "omitNull" : false,
+            "maxConcurrentQueries" : 100,
+            "pool" : {
+                "maxConnection" : 50,
+                "max" : 50
+            },
+            "define" : {
+                "syncOnAssociation" : false,
+                "underscored" : true
+            },
+            "dialectOptions": {
+                "charset": "utf8mb4",
+                "collate": "utf8mb4_unicode_ci",
+                "supportBigNumbers": true,
+                "bigNumberStrings": true
+            }
+        }
+	},
+	"kue": {
+		"port": 3002
+	},
+	"PicPath": "/Users/libo/ubey/dongwenxiwen/public/img/uploads",
+    "push": {
+        "baidu": "http://data.zz.baidu.com/urls?site=www.360zhijia.com&token=xMDevGvrZlHfRZYy"
+    },
+    "testJobs": ["JD.js"],
+    "needRequestPageUrl": false,
+	"cacheTTL": 10
+}
