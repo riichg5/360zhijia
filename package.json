@@ -39,7 +39,7 @@
     "node-schedule": "^1.2.0",
     "node-uuid": "^1.4.7",
     "phantom": "^4.0.9",
-    "redis": "^2.6.5",
+    "redis": "^2.8.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "sequelize": "^3.28.0",

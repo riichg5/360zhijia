@@ -48,6 +48,7 @@ class AnQuan extends Base {
                 let maxPageNum = self.getMaxPageCount($firstPage);
                 let currentPageNum = row.page_num || 1;
 
+                _logger.debug(`======> currentPageNum: ${currentPageNum}, maxPageNum: ${maxPageNum}`);
                 //循环最大deep page
                 for(; currentPageNum <= maxPageNum; currentPageNum++) {
                     let $ = null;
@@ -55,11 +56,10 @@ class AnQuan extends Base {
                     if(currentPageNum === 1) {
                         $ = $firstPage;
                     } else {
-                        let pageUri = self.getPageUrl({
+                        let uri = self.getPageUrl({
                             originUri: row.uri,
                             pageNum: currentPageNum
                         });
-                        let uri = self.getPageUrl({pageUrl: pageUri, pageNum: currentPageNum});
                         self.logger.debug(`forum page number is: ${currentPageNum}, uri is: ${uri}`);
                         $ = yield self.loadUri({uri: uri});
                     }
@@ -69,13 +69,22 @@ class AnQuan extends Base {
                     self.logger.debug(`get productIds: ${productIds}`);
                     for(var i=0; i< productIds.length; i++) {
                         yield createMsgFunc({
-                            desc: row.desc,
                             priority: self.priority,
-                            productId: productIds[i]
+                            data: {
+                                productId: productIds[i],
+                                title: row.desc
+                            }
                         });
                     }
+
+                    row.page_num = currentPageNum + 1;
+                    yield row.save();
                 }
+
+                row.is_over = 1;
+                yield row.save();
             }
+
             return;
         });
     }
@@ -88,17 +97,18 @@ class AnQuan extends Base {
             return yield dDxTask.findAll({
                 where: {
                     is_over: 0
-                },
-                raw: true
+                }
             });
         });
     }
 
     getProductIds ($) {
-        let linkAs = $("div[class='p-name']").find('a').attr('href');
+        let linkAs = $("div[class='p-name']").find('a');
         let productIds = [];
+        let amount = linkAs.length;
 
-        for(let href of linkAs) {
+        for(let i=0; i<amount; i++) {
+            let href = linkAs.eq(i).attr('href');
             let splits = href.split('/');
             let lastSplit = splits[splits.length - 1];
             let pageNameSplits = lastSplit.split('.');
@@ -107,6 +117,18 @@ class AnQuan extends Base {
                 productIds.push(pageNameSplits[0]);
             }
         }
+        // for(let href of linkAs) {
+        // linkAs.forEach((href) => {
+            // let splits = href.split('/');
+            // let lastSplit = splits[splits.length - 1];
+            // let pageNameSplits = lastSplit.split('.');
+
+            // if(pageNameSplits.length === 2) {
+            //     productIds.push(pageNameSplits[0]);
+            // }
+        // });
+
+        // }
         return productIds;
     }
 

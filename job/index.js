@@ -31,7 +31,7 @@ let job = (opts) => {
             	console.log("job filename: ", filename);
             	console.log("fullPath: ", fullPath);
 
-                if(process.env.NODE_ENV === 'test') {
+                if(['test', 'jd'].indexOf(process.env.NODE_ENV) !== -1) {
                     if(testJobs.indexOf(filename) === -1) {
                         _logger.debug(`filename ${filename} removed.`);
                         return;
