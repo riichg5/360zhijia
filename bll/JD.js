@@ -170,7 +170,7 @@ class JD extends Base {
                 questionList = res.questionList;
                 let skuInfo = res.skuInfo;
 
-                if(!categoryModel) {
+                if(!categoryModel && questionList.length > 0) {
                     categoryModel = yield dCategory.findOne({
                         where: {
                             name: skuInfo.thirdCategoryName
@@ -185,7 +185,7 @@ class JD extends Base {
                     }
                 }
 
-                if(pageNum === 1) {
+                if(pageNum === 1 && questionList.length > 0) {
                     //检查product是否存在
                     let product = yield dProduct.findOne({
                         where: {
