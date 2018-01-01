@@ -2,6 +2,7 @@
 
 let Base = require('./Base');
 let lockHelper = require(_base + 'lib/lockHelper');
+let IsProcessing = false;
 
 class Job extends Base {
 	constructor(context) {
@@ -18,23 +19,31 @@ class Job extends Base {
 
 		//每3分钟
 		// self.schedule.scheduleJob('*/3 * * * *', () => {
-		self.schedule.scheduleJob('*/5 * * * * *', () => {
+		self.schedule.scheduleJob('*/30 * * * * *', () => {
 
 			let startTime = new Date().getTime();
 			let isLockFailed = false;
 
 			return _co(function* () {
-				let isLock = yield lockHelper.pLock({
-					context: context,
-					name: `lock_job_type_${self.type}`,
-					timeout: 3600 * 24 * 365,	//锁一年
-				});
+				// let isLock = yield lockHelper.pLock({
+				// 	context: context,
+				// 	name: `lock_job_type_${self.type}`,
+				// 	timeout: 3600 * 24 * 365,	//锁一年
+				// });
 
-				if(!isLock){
-					isLockFailed = true;
-					self.logger.warn(`failed to lock ${self.type}`);
+				// if(!isLock){
+				// 	isLockFailed = true;
+				// 	self.logger.warn(`failed to lock ${self.type}`);
+				// 	return;
+				// }
+
+				if(IsProcessing === true) {
+					self.logger.debug(`job ${self.type} is running, can not run again.`);
 					return;
 				}
+
+				self.logger.info(`start proccess ${self.type}`);
+				IsProcessing = true;
 
 				let bJD = self.BLL.createJD(context);
 				yield bJD.begin({
@@ -46,16 +55,17 @@ class Job extends Base {
 			}).then(res => {
 				let endTime = new Date().getTime();
 				self.logger.info("JD Job over. used time:", Math.round((endTime - startTime) / 1000));
-
-				if(!isLockFailed) {
-					return _co(function* () {
-						yield lockHelper.pUnlock({
-							context: context,
-							name: `lock_job_type_${self.type}`
-						});
-					});
-				}
+				IsProcessing = false;
+				// if(!isLockFailed) {
+				// 	return _co(function* () {
+				// 		yield lockHelper.pUnlock({
+				// 			context: context,
+				// 			name: `lock_job_type_${self.type}`
+				// 		});
+				// 	});
+				// }
 			}).catch(error => {
+				IsProcessing = false;
 				self.logger.error("JD Job failed.");
 				self.logger.error("error:", error.message);
 				self.logger.error("stack:", error.stack);
@@ -70,7 +80,9 @@ class Job extends Base {
 
 		return _co(function* () {
 			self.logger.debug(`start excute job, data is: ${_utils.inspect({obj: job.data})}`);
-			return;
+
+			let bJD = self.BLL.createJD(context);
+			yield bJD.processQuestionsByProductId(job.data.productId);
 		});
 	}
 }

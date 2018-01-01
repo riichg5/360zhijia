@@ -25,10 +25,12 @@ let cheerio = require('cheerio');
 let request = require('request-promise');
 let Promise = require('bluebird');
 
-class AnQuan extends Base {
+let questionUrlTemplate = `https://question.jd.com/question/getQuestionAnswerList.action?page={pageNum}&productId={productId}`;
+
+class JD extends Base {
 	constructor(context) {
 		super(context);
-        this.dal = this.DAL.createAnQuan(context);
+        this.dal = null;
 	}
 
     begin (opts) {
@@ -79,6 +81,9 @@ class AnQuan extends Base {
 
                     row.page_num = currentPageNum + 1;
                     yield row.save();
+
+                    //休息一下
+                    // yield self.sleep(500);
                 }
 
                 row.is_over = 1;
@@ -117,18 +122,6 @@ class AnQuan extends Base {
                 productIds.push(pageNameSplits[0]);
             }
         }
-        // for(let href of linkAs) {
-        // linkAs.forEach((href) => {
-            // let splits = href.split('/');
-            // let lastSplit = splits[splits.length - 1];
-            // let pageNameSplits = lastSplit.split('.');
-
-            // if(pageNameSplits.length === 2) {
-            //     productIds.push(pageNameSplits[0]);
-            // }
-        // });
-
-        // }
         return productIds;
     }
 
@@ -153,6 +146,103 @@ class AnQuan extends Base {
             return 1;
         }
     }
+
+    getPoructUrlOfJD (imgPath) {
+        return `http://img1.360buyimg.com/n1/s200x200_${imgPath}`;
+    }
+
+    processQuestionsByProductId (productId) {
+        let self = this, context = self.context;
+        let questionList = [];
+        let pageNum = 1;
+        let categoryModel = null;
+
+        return _co(function* () {
+            let dProduct = self.DAL.createDxProduct(context);
+            let dCategory = self.DAL.createDxCategory(context);
+
+            do{
+                let url = questionUrlTemplate.replace("{pageNum}", pageNum).replace("{productId}", productId);
+                let res = yield self.loadJSON({
+                    uri: url
+                });
+
+                questionList = res.questionList;
+                let skuInfo = res.skuInfo;
+
+                if(!categoryModel) {
+                    categoryModel = yield dCategory.findOne({
+                        where: {
+                            name: skuInfo.thirdCategoryName
+                        },
+                        raw: true
+                    });
+
+                    if(!categoryModel) {
+                        categoryModel = yield dCategory.create({
+                            name: skuInfo.thirdCategoryName
+                        });
+                    }
+                }
+
+                if(pageNum === 1) {
+                    //检查product是否存在
+                    let product = yield dProduct.findOne({
+                        where: {
+                            id: productId
+                        },
+                        raw: true
+                    });
+                    if(!product) {
+                        yield dProduct.create({
+                            id: productId,
+                            name: skuInfo.fullName,
+                            short_name: skuInfo.shortName,
+                            img_path: self.getPoructUrlOfJD(skuInfo.imgUrl),
+                            category_id: categoryModel.id
+                        });
+                    }
+                }
+
+                if(questionList.length > 0) {
+                    //插入问题
+                    let asks = [];
+                    let dAsk = self.DAL.createDxAsk(context);
+                    let questionIds = _.map(questionList, 'id');
+                    let notExistQuestionIds = [];
+
+                    let rows = yield dAsk.findAll({
+                        where: {
+                            question_id: {
+                                $in: questionIds
+                            }
+                        },
+                        attributes: ['question_id'],
+                        raw: true
+                    });
+                    let existQuestionIds = _.map(rows, 'question_id');
+
+                    self.logger.debug(`--> existQuestionIds: ${_utils.inspect({obj: existQuestionIds})}`);
+                    for(let question of questionList) {
+                        //注意，目前mysql查询出来数字类型都会是字符串
+                        if(existQuestionIds.indexOf(question.id + '') === -1 && question.answerCount > 0) {
+                            asks.push({
+                                title: question.content,
+                                content: null,
+                                question_id: question.id,
+                                product_id: productId,
+                                reply_count: question.answerCount,
+                            });
+                        }
+                    }
+                    yield dAsk.bulkCreate(asks);
+                }
+
+                pageNum ++;
+            } while (questionList.length > 0);
+
+        });
+    }
 }
 
-module.exports = AnQuan;
+module.exports = JD;

@@ -5,6 +5,7 @@
 module.exports = function (sequelize, DataTypes) {
     return sequelize.define('product', {
     	name: DataTypes.STRING,
+    	short_name: DataTypes.STRING,
         img_path: DataTypes.STRING,
         category_id: DataTypes.INTEGER,
     });

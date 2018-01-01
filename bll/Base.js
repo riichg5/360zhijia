@@ -34,6 +34,14 @@ class Base {
 		});
 	}
 
+	sleep (time) {
+		return _co(function* () {
+		    yield new Promise((done, reject) => {
+		        setTimeout(done, time);
+		    });
+		});
+	}
+
 	loadUri (opts) {
 		let self = this;
 		let context = self.context;
