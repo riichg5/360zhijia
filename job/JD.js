@@ -17,6 +17,10 @@ class Job extends Base {
 		let priority = self.priority;
 		let superCreateMsg = super.createJDMsg.bind(self);
 
+		if(process.env.NODE_ENV.indexOf('jd') === -1) {
+			self.logger.debug(`不执行东问西问任务...`);
+			return;
+		}
 		//每3分钟
 		// self.schedule.scheduleJob('*/3 * * * *', () => {
 		self.schedule.scheduleJob('*/30 * * * * *', () => {
