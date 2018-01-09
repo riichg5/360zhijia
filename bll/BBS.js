@@ -709,7 +709,7 @@ class BBS extends Base {
 
             info.title = self.getThreadSubject({
                 $: $,
-                threadTitle: config.prefixSubjectName || threadTitle
+                threadTitle: threadTitle
             });
 
             //不需要回复，则只爬第一页
