@@ -1,5 +1,31 @@
 [
 	{
+		"name": "OS综合讨论区",
+		"prefixSubjectName": "360手机",
+		"uri": "http://bbs.360.cn/forum-5128-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "58 */1 * * *",
+		"tagIds": [507],
+		"categoryId": 507,
+		"deepPageCount": 4,
+		"keyWords": ["360", "OS", "手机"],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/12/18/360n6lite.jpg\"><img class=\"aligncenter \" src=\"http://www.360zhijia.com/wp-content/uploads/2017/12/18/360n6lite.jpg\" width=\"196\" height=\"223\" /></a>"
+	},
+	{
+		"name": "版本发布",
+		"prefixSubjectName": "",
+		"uri": "http://bbs.360.cn/forum-5165-1.html",
+		"needReply": false,
+		"priority": "normal",
+		"cron": "57 */1 * * *",
+		"tagIds": [506],
+		"categoryId": 506,
+		"deepPageCount": 1,
+		"keyWords": [],
+		"img": "<a href=\"http://www.360zhijia.com/wp-content/uploads/2013/03/360qiyeban.jpg\"><img class=\"aligncenter \" src=\"http://www.360zhijia.com/wp-content/uploads/2013/03/360qiyeban.jpg\" width=\"300\" height=\"189\" /></a>"
+	},
+	{
 		"name": "快剪辑",
 		"uri": "http://bbs.360.cn/forum-7239-1.html",
 		"needReply": true,
