@@ -211,6 +211,16 @@ class BBS extends Base {
         for(let i=0; i<posts.length; i++) {
             let img = null;
             let post = posts.eq(i);
+
+            if(needAll === true) {
+                let postLink = post.find("a[href*='thread-']");
+
+                if(postLink && postLink.eq(0)) {
+                    uris.push(self.getUrlByPath(postLink.eq(0).attr("href")));
+                }
+                continue;
+            }
+
             let img_reply = post.find("th img[alt='已答复']");
             let img_resolve = post.find("th img[alt='已解决']");
             let img_confirm = post.find("th img[alt='确认解决']");
@@ -242,7 +252,7 @@ class BBS extends Base {
             }
 
 
-            if(needAll === true || img) {
+            if(img) {
                 let postLink = img.eq(0).prev('a').first();
                 if(postLink) {
                     uris.push(self.getUrlByPath(postLink.attr("href")));
