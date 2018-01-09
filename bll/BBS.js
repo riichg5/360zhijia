@@ -154,7 +154,7 @@ class BBS extends Base {
         }
 
         if(!isContains) {
-            subject = threadTitle.trim()+subject.trim();
+            subject = !_.isUndefined(config.prefixSubjectName) ? `${config.prefixSubjectName}${subject.trim()}` : (threadTitle.trim() + subject.trim());
         }
         return subject;
     }
