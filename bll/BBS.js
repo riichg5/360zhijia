@@ -18,6 +18,7 @@ class BBS extends Base {
         this.name = config.name;
         this.img = config.img;
         this.uri = config.uri;
+        this.needAll = config.needAll;
         this.needReply = config.needReply;
         this.priority = config.priority;
         this.cron = config.cron;
@@ -203,6 +204,7 @@ class BBS extends Base {
     getForumResolvedUris ($) {
         let self = this;
         let context = self.context;
+        let needAll = self.needAll;
         let posts = $("#moderate tr");
         let uris = [];
 
@@ -240,7 +242,7 @@ class BBS extends Base {
             }
 
 
-            if(img) {
+            if(needAll === true || img) {
                 let postLink = img.eq(0).prev('a').first();
                 if(postLink) {
                     uris.push(self.getUrlByPath(postLink.attr("href")));

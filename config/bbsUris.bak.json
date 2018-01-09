@@ -4,6 +4,7 @@
 		"prefixSubjectName": "360手机",
 		"uri": "http://bbs.360.cn/forum-5128-1.html",
 		"needReply": true,
+		"needAll": true,
 		"priority": "normal",
 		"cron": "58 */1 * * *",
 		"tagIds": [507],
