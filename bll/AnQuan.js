@@ -40,37 +40,6 @@ class AnQuan extends Base {
             self.logger.debug(`----> anquan urls: ${urls}`);
             return urls;
         });
-
-        // return _co(function* () {
-        //     let currentId = yield self.dal.getCurrentId();
-        //     let isExist = false;
-        //     let urls = [];
-
-        //     let lastId = currentId;
-        //     currentId += 1;
-        //     do {
-        //         let uri = self.getUri(currentId);
-        //         let res = yield self.loadJSON({
-        //             uri: uri,
-        //             isJsonResponse: true
-        //         });
-
-        //         if(res && res.id === currentId) {
-        //             isExist = true;
-        //             lastId = currentId;
-        //             currentId += 1;
-        //             urls.push(uri);
-        //         } else {
-        //             isExist = false;
-        //         }
-        //     } while(isExist);
-
-        //     yield self.dal.updateCurrentId({currentId: lastId});
-
-        //     urls = _.uniq(_.compact(urls));
-        //     self.logger.debug(`----> anquan urls: ${urls}`);
-        //     return urls;
-        // });
     }
 
     //excute 方法
