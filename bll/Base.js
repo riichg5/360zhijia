@@ -244,7 +244,10 @@ class Base {
 		let maxImgWidth = _config.get("maxImgWidth");
 
 		for(let i = 0; i < images.length; i++) {
-			imgArray.push(images.eq(i));
+			//base64图片不用下载
+			if(images.eq(i).attr('src').indexOf('base64,') === -1) {
+				imgArray.push(images.eq(i));
+			}
 		}
 
 		// self.logger.debug("images:", imgArray);

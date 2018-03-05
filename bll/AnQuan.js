@@ -66,6 +66,37 @@ class AnQuan extends Base {
         });
     }
 
+    getContentHtml (jsonRes) {
+        if(jsonRes.content) {
+            return jsonRes.content;
+        }
+
+        if(jsonRes.posts) {
+            let content = [];
+            let posts = jsonRes.posts.activity.concat(jsonRes.posts.knowledge || []).concat(jsonRes.posts.news || []);
+
+            content.push(`
+                <p style="text-align: center; text-indent: 0em;"><strong><img title="360网络安全周报" src="${jsonRes.cover}" alt="${jsonRes.cover}" /></strong></p>
+            `);
+
+            for(let item of posts) {
+                content.push(`
+                    <h2 name="h2-0" id="h2-0">${item.title}</h2>
+                    <p style="text-align: center; text-indent: 0em;"><strong><img title="${item.title}" src="${item.cover}" alt="${item.cover}" /></strong></p>
+                    <p style="text-align: left;">${item.desc}</p>
+                `);
+                if(item.url) {
+                    content.push(`<p style="text-align: left;">文章地址：<a href='${item.url}' target='_blank'>${item.url}</a></p>`);
+                };
+                content.push(`<p style="text-align: left;"><span style="font-size: 18px;">&nbsp;</span></p>`);
+            }
+
+            return content.join('');
+        }
+
+        return '';
+    }
+
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
@@ -85,13 +116,19 @@ class AnQuan extends Base {
             });
 
             info.title = res.title;
-            self.logger.debug(`============>res.content: ${res.content}`);
-            info.$content = cheerio.load(res.content).root();
+
+            let htmlContent = self.getContentHtml(res);
+            self.logger.debug(`============>res.content: ${htmlContent}`);
+            info.$content = cheerio.load(htmlContent).root();
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content, uri: uri});
             info.content = self.filterHtml(replaceInfo.html);
-            info.content = info.content + `<p>本文来源于360安全客，原文地址：<a href='https://www.anquanke.com/post/id/${id}' target='_blank'>https://www.anquanke.com/post/id/${id}</a></p>`;
+
+            if(res.content) {
+                info.content = info.content + `<p>本文来源于360安全客，原文地址：<a href='https://www.anquanke.com/post/id/${id}' target='_blank'>https://www.anquanke.com/post/id/${id}</a></p>`;
+            }
+
             info.excerpt = res.desc; //self.getExcerpt(info.$content.text());
 
             return info;
