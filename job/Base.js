@@ -47,7 +47,7 @@ class Base {
 
 		    job.removeOnComplete(true)
            	.priority(self.priority)
-           	.attempts(20)
+           	.attempts(2)
            	.backoff(function(attempts, delay){
            		return attempts * 1000 * 60 * 15;  //add 15 minutes
             })

@@ -9,7 +9,8 @@ let fs = require('fs');
 let url = require('url');
 let mkdirp = require('mkdirp');
 let Promise = require('bluebird');
-let imageInfo = require('image-info');
+let sizeOf = Promise.promisify(require('image-size'));
+
 let iconv = require('iconv-lite');
 
 class Base {
@@ -194,8 +195,10 @@ class Base {
 			}
 
 			self.logger.debug("saved....");
-			let pImageInfo = Promise.promisify(imageInfo);
-			let info = yield pImageInfo(imagePath);
+
+			let info = yield sizeOf(imagePath);
+
+			self.logger.debug(`image info: width:${info.width}, height:${info.height}`);
 			let res = {
 				imagePath: imagePath,
 				imagWebPath: imageName,
