@@ -1,3 +1,7 @@
+/*
+    阿里巴巴聚安全
+*/
+
 let Base = require('./Base');
 let cheerio = require('cheerio');
 let request = require('request-promise');
@@ -6,18 +10,25 @@ let Promise = require('bluebird');
 class AnQuan extends Base {
 	constructor(context) {
 		super(context);
-        // this.uri = "https://api.anquanke.com/data/v1/post?id=";
         this.tagIds = [510];
         this.categoryId = 510;
-        this.dal = this.DAL.createAnQuan(context);
+        this.defaultImg = "<a href=\"/wp-content/uploads/pics/alijuanquan.jpg\"><img class=\"aligncenter size-medium wp-image-179507\" src=\"/wp-content/uploads/pics/alijuanquan.jpg\" alt=\"阿里聚安全\" width=\"360\" height=\"175\" /></a>";
 	}
 
-    getUri (id) {
-        return `https://api.anquanke.com/data/v1/post?id=${id}`;
+    getUri (opts) {
+        let url = opts.url;
+
+        return `http://jaq.alibaba.com${url}`;
     }
 
-    getArticleListUri (id) {
-        return `https://api.anquanke.com/data/v1/posts?page=1&size=30`;
+    //安全资讯
+    getAnquanArticleListUri () {
+        return `http://jaq.alibaba.com/community/api/article?catid=17&start=0&num=20`;
+    }
+
+    //技术研究
+    getJiShuArticleListUri () {
+        return `http://jaq.alibaba.com/community/api/article?catid=4&start=0&num=20`;
     }
 
     //出口方法
@@ -25,19 +36,31 @@ class AnQuan extends Base {
         let self = this, context = self.context;
 
         return _co(function* () {
-            let res = yield self.loadJSON({
-                uri: self.getArticleListUri(),
-                isJsonResponse: true
-            });
+
+            let [res1, res2] = yield [
+                self.loadJSON({
+                    uri: self.getAnquanArticleListUri(),
+                    isJsonResponse: true
+                }),
+                self.loadJSON({
+                    uri: self.getJiShuArticleListUri(),
+                    isJsonResponse: true
+                }),
+            ];
 
             let urls = [];
-            for(let item of res.data) {
-                let uri = self.getUri(item.id);
+            // self.logger.debug(`---------> res1.articlelist:`, _utils.inspect({obj: res1.articlelist}));
+            for(let item of res1.articlelist) {
+                let uri = self.getUri({url: item.url});
+                urls.push(uri);
+            }
+            for(let item of res2.articlelist) {
+                let uri = self.getUri({url: item.url});
                 urls.push(uri);
             }
 
             urls = _.uniq(_.compact(urls));
-            self.logger.debug(`----> anquan urls: ${urls}`);
+            self.logger.debug(`---->alibaba urls: ${urls}`);
             return urls;
         });
     }
@@ -87,7 +110,7 @@ class AnQuan extends Base {
                 `);
                 if(item.url) {
                     content.push(`<p style="text-align: left;">文章地址：<a href='${item.url}' target='_blank'>${item.url}</a></p>`);
-                };
+                }
                 content.push(`<p style="text-align: left;"><span style="font-size: 18px;">&nbsp;</span></p>`);
             }
 
@@ -101,7 +124,6 @@ class AnQuan extends Base {
         let self = this;
         let context = self.context;
         let uri = opts.uri;
-        let id = uri.split('id=')[1];
         let info = {
             title: "",
             content: "",
@@ -109,27 +131,17 @@ class AnQuan extends Base {
             uri: uri
         };
 
-        return _co(function *(argument) {
-            let res = yield self.loadJSON({
-                uri: uri,
-                isJsonResponse: true
-            });
+        return _co(function* (argument) {
+            let $ = yield self.loadUri({uri: uri});
 
-            info.title = res.title;
 
-            let htmlContent = self.getContentHtml(res);
-            self.logger.debug(`============>res.content: ${htmlContent}`);
-            info.$content = cheerio.load(htmlContent).root();
+            info.title = $("h2.article-title").eq(0).text().trim();
+            info.$content = $("div.article-content").eq(0);
 
-            yield self.baseHtmlProcess({$content: info.$content, uri: uri});
+            // yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content, uri: uri});
-            info.content = self.filterHtml(replaceInfo.html);
-
-            if(res.content) {
-                info.content = info.content + `<p>本文来源于360安全客，原文地址：<a href='https://www.anquanke.com/post/id/${id}' target='_blank'>https://www.anquanke.com/post/id/${id}</a></p>`;
-            }
-
-            info.excerpt = res.desc; //self.getExcerpt(info.$content.text());
+            info.content = self.addDefaultImg(self.filterHtml(replaceInfo.html));
+            info.excerpt = self.getExcerpt(info.$content.text());
 
             return info;
         });

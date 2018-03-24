@@ -8,7 +8,8 @@ module.exports = {
 		_jinshan: "金山",
 		_aiduba: "爱毒霸",
 		_dailyCheck: "每日检查",
-		_jd: "dwxw"
+		_jd: "dwxw",
+		_阿里聚安全安全资讯: "阿里聚安全"
 	},
 
 	PRIORITY: {

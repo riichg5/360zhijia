@@ -110,6 +110,16 @@ class Base {
         });
 	}
 
+    addDefaultImg (html) {
+        let self = this;
+
+        if(html.indexOf('<img') === -1) {
+            return "<p>" + self.defaultImg + "</p>" + html;
+        }
+
+        return html;
+    }
+
 	getImgSize (imgInfo) {
 	    //计算长宽比例
 	    let maxImgWidth = _config.get("maxImgWidth");
