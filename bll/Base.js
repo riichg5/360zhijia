@@ -195,8 +195,16 @@ class Base {
 			}
 
 			self.logger.debug("saved....");
+			let info = {
+				width: 600,
+				height: 600
+			};
 
-			let info = yield sizeOf(imagePath);
+			try {
+				info = yield sizeOf(imagePath);
+			} catch(error) {
+				self.logger.debug(`size of ${imagePath} error: ${error.message}`);
+			}
 
 			self.logger.debug(`image info: width:${info.width}, height:${info.height}`);
 			let res = {
