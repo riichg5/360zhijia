@@ -186,7 +186,10 @@ class Base {
 			try {
 				let requestInfo = request.get({
 					uri: imgUrl,
-					timeout: 60 * 1000
+					timeout: 10 * 1000,
+					headers: {
+
+					}
 				}).pipe(picStream);
 
 				yield pOn('close');
