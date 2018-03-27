@@ -1,4 +1,5 @@
-//360论坛
+//QQ管家论坛
+
 let Base = require('./Base');
 // let IsProcessing = false;
 let configs = require(_base + 'config/qqUris.json');

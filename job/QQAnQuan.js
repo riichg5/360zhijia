@@ -1,11 +1,14 @@
-// 金山动态
+/*
+	腾讯安全
+	https://guanjia.qq.com/news/n0/list_0_1.html
+*/
 let Base = require('./Base');
 let IsProcessing = false;
 
 class Job extends Base {
 	constructor(context) {
 		super(context);
-		this.type = CONST.JOB._jinshan;
+		this.type = CONST.JOB._腾讯安全;
 		this.priority = CONST.PRIORITY.NORMAL;
 	}
 
@@ -15,8 +18,8 @@ class Job extends Base {
 		let priority = self.priority;
 		let superCreateMsg = super.createMsg.bind(self);
 
-		//每小时57分
-		self.schedule.scheduleJob('*/13 * * * *', () => {
+		// self.schedule.scheduleJob('*/24 * * * *', () => {
+		self.schedule.scheduleJob('*/10 * * * * *', () => {
 			if(IsProcessing === true) {
 				self.logger.debug(`job ${self.type} is running, can not run again.`);
 				return;
@@ -27,8 +30,8 @@ class Job extends Base {
 
 			let startTime = new Date().getTime();
 			return _co(function* () {
-				let bJinShan = self.BLL.createJinShan(context);
-				let uris = yield bJinShan.getArticleList();
+				let bQQAnQuan = self.BLL.createQQAnQuan(context);
+				let uris = yield bQQAnQuan.getArticleList();
 
 				self.logger.debug("end of getArticleList");
 				for(let uri of uris) {
@@ -44,11 +47,11 @@ class Job extends Base {
 				return;
 			}).then(res => {
 				let endTime = new Date().getTime();
-				self.logger.info("JinShan Job over. used time:", Math.round((endTime - startTime) / 1000));
+				self.logger.info("QQAnQuan Job over. used time:", Math.round((endTime - startTime) / 1000));
 				IsProcessing = false;
 			}).catch(error => {
 				IsProcessing = false;
-				self.logger.error("JinShan Job failed.");
+				self.logger.error("QQAnQuan Job failed.");
 				self.logger.error("error:", error.message);
 				self.logger.error("stack:", error.stack);
 			});
@@ -63,10 +66,10 @@ class Job extends Base {
 		return _co(function* () {
 			self.logger.debug("start excute job, data is: ", job.data.uri);
 			let uri = job.data.uri;
-			let bJinshan = self.BLL.createJinShan(context);
+			let bQQAnQuan = self.BLL.createQQAnQuan(context);
 
 			yield context.sequelize.transaction(() => {
-				return bJinshan.procArticle({uri: uri});
+				return bQQAnQuan.procArticle({uri: uri});
 			});
 			return;
 		});

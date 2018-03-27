@@ -1,4 +1,5 @@
-// 360安全播报   http://bobao.360.cn/
+// 360安全客   http://bobao.360.cn/
+
 let Base = require('./Base');
 let IsProcessing = false;
 

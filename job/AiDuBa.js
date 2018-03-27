@@ -1,4 +1,5 @@
-//360论坛
+//爱毒霸
+
 let Base = require('./Base');
 // let IsProcessing = false;
 let configs = require(_base + 'config/aidubaUris.json');

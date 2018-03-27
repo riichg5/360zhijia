@@ -9,7 +9,8 @@ module.exports = {
 		_aiduba: "爱毒霸",
 		_dailyCheck: "每日检查",
 		_jd: "dwxw",
-		_阿里聚安全安全资讯: "阿里聚安全"
+		_阿里聚安全安全资讯: "阿里聚安全",
+		_腾讯安全: "腾讯安全"
 	},
 
 	PRIORITY: {
