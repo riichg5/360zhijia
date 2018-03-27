@@ -18,8 +18,8 @@ class Job extends Base {
 		let priority = self.priority;
 		let superCreateMsg = super.createMsg.bind(self);
 
-		// self.schedule.scheduleJob('*/24 * * * *', () => {
-		self.schedule.scheduleJob('*/10 * * * * *', () => {
+		self.schedule.scheduleJob('*/24 * * * *', () => {
+		// self.schedule.scheduleJob('*/10 * * * * *', () => {
 			if(IsProcessing === true) {
 				self.logger.debug(`job ${self.type} is running, can not run again.`);
 				return;
