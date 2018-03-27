@@ -24,6 +24,14 @@ let queue = kue.createQueue({
         options: {}
     }
 });
+
+/*
+    下面代码是解决以下问题
+    Possible EventEmitter memory leak detected. 11 enqueue listeners added. Use emitter.setMaxListeners() to increase limit
+    https://github.com/Automattic/kue/issues/1030
+*/
+queue.setMaxListeners(1000);
+
 context.queue = queue;
 context.logger = _logger;
 
