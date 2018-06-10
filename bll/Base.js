@@ -10,6 +10,7 @@ let url = require('url');
 let mkdirp = require('mkdirp');
 let Promise = require('bluebird');
 let sizeOf = Promise.promisify(require('image-size'));
+const md5File = require('md5-file/promise')
 
 let iconv = require('iconv-lite');
 
@@ -151,7 +152,7 @@ class Base {
 
 	getImageFolderName () {
 		let self = this;
-		let dateStr = moment().format('YYYY/MM/DD');
+		let dateStr = moment().format('YYYY/MM');
 		let fullPath = path.resolve(_config.get("PicPath"), dateStr);
 		let webPath = path.join(_config.get('imgWebPath'), dateStr);
 
@@ -213,16 +214,25 @@ class Base {
 				height: 600
 			};
 
+			//获取hash值
+			let md5 = yield md5File(imagePath);
+			md5 = md5.toLowerCase();
+			let newImagePath = path.join(imgInfo.fullPath, md5 + ext);
+			let newImageName = path.join(imgInfo.webPath, md5 + ext);
+
+			fs.renameSync(imagePath, newImagePath);
+			self.logger.debug(`imagePath----> ${imagePath}, newImagePath(md5)----> ${newImagePath}`);
+
 			try {
-				info = yield sizeOf(imagePath);
+				info = yield sizeOf(newImagePath);
 			} catch(error) {
-				self.logger.debug(`size of ${imagePath} error: ${error.message}`);
+				self.logger.debug(`size of ${newImagePath} error: ${error.message}`);
 			}
 
 			self.logger.debug(`image info: width:${info.width}, height:${info.height}`);
 			let res = {
-				imagePath: imagePath,
-				imagWebPath: imageName,
+				imagePath: newImagePath,
+				imagWebPath: newImageName,
 				width: info.width,
 				height: info.height
 			};
