@@ -13,7 +13,7 @@ class RuiXing extends Base {
         ];
         this.tagIds = [8];
         this.categoryId = 8;
-        this.defaultImg = "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/04/ruixing.jpg\"><img class=\"aligncenter size-medium wp-image-191644\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/04/ruixing-300x241.jpg\" alt=\"\" width=\"300\" height=\"241\" /></a>";
+        this.defaultImg = "<a href=\"/wp-content/uploads/2017/04/ruixing.jpg\"><img class=\"aligncenter size-medium wp-image-191644\" src=\"/wp-content/uploads/2017/04/ruixing-300x241.jpg\" alt=\"\" width=\"300\" height=\"241\" /></a>";
 	}
 
     addDefaultImg (html) {

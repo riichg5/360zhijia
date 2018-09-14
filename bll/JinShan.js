@@ -13,7 +13,7 @@ class JinShan extends Base {
         this.domain = 'www.ijinshan.com';
         this.tagIds = [8];
         this.categoryId = 8;
-        this.defaultImg = `<a href="http://www.360zhijia.com/wp-content/uploads/2017/06/jinshan_400.jpg"><img class="aligncenter size-medium wp-image-237096" src="http://www.360zhijia.com/wp-content/uploads/2017/06/jinshan_400-300x133.jpg" alt="金山安全" width="300" height="133" /></a>`;
+        this.defaultImg = `<a href="/wp-content/uploads/2017/06/jinshan_400.jpg"><img class="aligncenter size-medium wp-image-237096" src="/wp-content/uploads/2017/06/jinshan_400-300x133.jpg" alt="金山安全" width="300" height="133" /></a>`;
 	}
 
     addDefaultImg (html) {

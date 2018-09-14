@@ -13,7 +13,7 @@ class AnQuan extends Base {
 		super(context);
         this.tagIds = [510];
         this.categoryId = 510;
-        this.defaultImg = "<a href=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia.jpg\"><img class=\"aligncenter size-medium wp-image-192571\" src=\"http://www.360zhijia.com/wp-content/uploads/2017/04/qqguanjia-300x175.jpg\" alt=\"\" width=\"300\" height=\"175\" /></a>";
+        this.defaultImg = "<a href=\"/wp-content/uploads/2017/04/qqguanjia.jpg\"><img class=\"aligncenter size-medium wp-image-192571\" src=\"/wp-content/uploads/2017/04/qqguanjia-300x175.jpg\" alt=\"\" width=\"300\" height=\"175\" /></a>";
         this.domain = "guanjia.qq.com";
 	}
 
