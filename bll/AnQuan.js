@@ -87,7 +87,7 @@ class AnQuan extends Base {
                 `);
                 if(item.url) {
                     content.push(`<p style="text-align: left;">文章地址：<a href='${item.url}' target='_blank'>${item.url}</a></p>`);
-                };
+                }
                 content.push(`<p style="text-align: left;"><span style="font-size: 18px;">&nbsp;</span></p>`);
             }
 
