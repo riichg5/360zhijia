@@ -138,7 +138,7 @@ class Base {
 	}
 
   	replacePhoneNumber (content) {
-	    content = content.replace(/1(\d{2})\d{4}(\d{4})/g, "1$1****$2");
+	    // content = content.replace(/1(\d{2})\d{4}(\d{4})/g, "1$1****$2");
 	    return content;
   	}
 
