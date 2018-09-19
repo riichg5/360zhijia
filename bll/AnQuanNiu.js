@@ -92,6 +92,8 @@ class AnQuan extends Base {
 
             let $content = $(".blog-excerpt");
             $content.find(".blog-single-head").remove();
+            $content.find('span').removeAttr("style");
+            $content.find('img').removeAttr("srcset");
             info.$content = $content.eq(0);
 
             info.excerpt = self.getExcerpt(info.$content.text());
