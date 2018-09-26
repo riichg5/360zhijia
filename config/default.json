@@ -78,6 +78,11 @@
         "css": "/wp-content/themes/super360/highlight.js.css",
         "js": "/wp-content/themes/super360/highlight.min.js"
     },
+    "editormd": {
+        "miniCss": "/wp-content/themes/super360/editormd.min.css",
+        "css": "/wp-content/themes/super360/editormd.css",
+        "js": "/wp-content/themes/super360/editormd.min.js"
+    },
     "needRequestPageUrl": true,
     "testJobs": []
 }

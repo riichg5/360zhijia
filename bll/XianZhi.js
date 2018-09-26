@@ -1,19 +1,16 @@
 /*
-    安全牛
-    https://www.aqniu.com/
+    先知社区
+    https://xz.aliyun.com/
 */
 
 let Base = require('./Base');
-let cheerio = require('cheerio');
-let request = require('request-promise');
-let Promise = require('bluebird');
 
 class AnQuan extends Base {
     constructor(context) {
         super(context);
         this.tagIds = [510];
         this.categoryId = 510;
-        this.domain = "www.aqniu.com";
+        this.domain = "xz.aliyun.com";
     }
 
     //出口方法
@@ -22,12 +19,7 @@ class AnQuan extends Base {
 
         return _co(function* () {
             let pageUrls = [
-                "https://www.aqniu.com/category/news-views",
-                "https://www.aqniu.com/category/industry",
-                "https://www.aqniu.com/category/threat-alert",
-                "https://www.aqniu.com/category/learn",
-                "https://www.aqniu.com/category/hack-geek",
-                "https://www.aqniu.com/category/tools-tech"
+                "https://xz.aliyun.com/"
             ];
 
             self.logger.debug(`pageUrls: ${pageUrls}`);
@@ -35,11 +27,11 @@ class AnQuan extends Base {
             let urls = [];
             for(let uri of pageUrls) {
                 let $ = yield self.loadUri({uri: uri});
-                let aLinks = $("h4 a");
+                let aLinks = $(".topic-title");
 
                 aLinks.each((i, link) => {
                     if(link && link.attribs && link.attribs.href) {
-                        urls.push(link.attribs.href);
+                        urls.push(`https://${self.domain}${link.attribs.href}`);
                     }
                 });
             }
@@ -73,6 +65,22 @@ class AnQuan extends Base {
         });
     }
 
+    //判断是否有pre标签，添加SyntaxHighlighter
+    addMarkdownCss (opts) {
+        let self = this;
+        let $content = opts.$content;
+
+        if($content.has("pre")) {
+            let config = _config.get("editormd");
+            self.logger.debug("find editormd pre tag.");
+            $content.append(`<link type="text/css" href="${config.miniCss}" rel="stylesheet">`);
+            // $content.append(`<link type="text/css" href="${config.css}" rel="stylesheet">`);
+            // $content.append(`<script type="text/javascript" src="${config.js}"></script>`);
+            // $content.append(`<script type="text/javascript">SyntaxHighlighter.all();</script>`);
+            self.logger.debug("add css and js of editormd");
+        }
+    }
+
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
@@ -87,20 +95,18 @@ class AnQuan extends Base {
         return _co(function* (argument) {
             let $ = yield self.loadUri({uri: uri});
 
-            info.title = $("h2").eq(0).text();
-            // info.excerpt = $(".content .desc").eq(0).text();
+            info.title = $(".content-title").eq(0).text();
 
-            let $content = $(".blog-excerpt");
-            $content.find(".blog-single-head").remove();
-            $content.find('span').removeAttr("style");
-            $content.find('img').removeAttr("srcset");
+            let $content = $("#topic_content");
             info.$content = $content.eq(0);
 
             info.excerpt = self.getExcerpt(info.$content.text());
 
+            self.addMarkdownCss({$content: $content});
             let replaceInfo = yield self.procContentImgs({$html: info.$content, uri: uri});
             info.content = self.filterHtml(replaceInfo.html);
-            info.content = info.content + `<p>本文来源于安全牛，原文地址：<a href='${uri}' target='_blank'>${uri}</a></p>`;
+            info.content = info.content + `<p>本文来源于先知社区，原文地址：<a href='${uri}' target='_blank'>${uri}</a></p>`;
+            info.content = `<div class="markdown-body">${info.content}</div>`;
 
             return info;
         });
