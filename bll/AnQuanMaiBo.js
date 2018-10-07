@@ -1,47 +1,47 @@
 /*
-    安全牛
-    https://www.aqniu.com/
+    安全脉搏
+    https://www.secpulse.com/
 */
 
 let Base = require('./Base');
+let cheerio = require('cheerio');
+let request = require('request-promise');
+let Promise = require('bluebird');
 
-class AnQuan extends Base {
+class AnQuanMaiBo extends Base {
     constructor(context) {
         super(context);
+        // this.uri = "https://api.anquanke.com/data/v1/post?id=";
         this.tagIds = [510];
         this.categoryId = 510;
-        this.domain = "www.aqniu.com";
+    }
+
+    getArticleListUri (id) {
+        return `https://www.secpulse.com/newpage/ajax_content`;
     }
 
     //出口方法
     getArticleList () {
-        let self = this;
+        let self = this, context = self.context;
 
         return _co(function* () {
-            let pageUrls = [
-                "https://www.aqniu.com/category/news-views",
-                "https://www.aqniu.com/category/industry",
-                "https://www.aqniu.com/category/threat-alert",
-                "https://www.aqniu.com/category/learn",
-                "https://www.aqniu.com/category/hack-geek",
-                "https://www.aqniu.com/category/tools-tech"
-            ];
+            let htmlContent = yield self.loadJSON({
+                uri: self.getArticleListUri(),
+                isJsonResponse: false
+            });
 
-            self.logger.debug(`pageUrls: ${pageUrls}`);
-
+            let $html = cheerio.load(htmlContent).root();
+            let aLinks = $html.find("a.title");
             let urls = [];
-            for(let uri of pageUrls) {
-                let $ = yield self.loadUri({uri: uri});
-                let aLinks = $("h4 a");
 
-                aLinks.each((i, link) => {
-                    if(link && link.attribs && link.attribs.href) {
-                        urls.push(link.attribs.href);
-                    }
-                });
-            }
+            aLinks.each((i, link) => {
+                if(link && link.attribs && link.attribs.href) {
+                    urls.push(link.attribs.href);
+                }
+            });
 
             urls = _.uniq(_.compact(urls));
+            self.logger.debug(`----> anquanmaibo urls: ${urls}`);
             return urls;
         });
     }
@@ -84,24 +84,21 @@ class AnQuan extends Base {
         return _co(function* (argument) {
             let $ = yield self.loadUri({uri: uri});
 
-            info.title = $("h2").eq(0).text();
-            // info.excerpt = $(".content .desc").eq(0).text();
+            info.title = $("h1").eq(0).text();
 
-            let $content = $(".blog-excerpt");
-            $content.find(".blog-single-head").remove();
-            $content.find('span').removeAttr("style");
-            $content.find('img').removeAttr("srcset");
+            let $content = $(".left-9-code");
             info.$content = $content.eq(0);
 
             info.excerpt = self.getExcerpt(info.$content.text());
 
+            yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content, uri: uri});
             info.content = self.filterHtml(replaceInfo.html);
-            info.content = info.content + `<p>本文来源于安全牛，原文地址：<a href='${uri}' target='_blank'>${uri}</a></p>`;
+            info.content = info.content + `<p>本文来源于安全脉搏，原文地址：<a href='${uri}' target='_blank'>${uri}</a></p>`;
 
             return info;
         });
     }
 }
 
-module.exports = AnQuan;
+module.exports = AnQuanMaiBo;

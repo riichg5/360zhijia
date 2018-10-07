@@ -1,14 +1,12 @@
-/*
-	阿里聚安全， 安全资讯
-	http://jaq.alibaba.com/community/category?spm=a313e.7916648.21000000.2.68f774d3QzMIp2&catid=17
-*/
+// 安全脉搏   https://www.secpulse.com/
+
 let Base = require('./Base');
 let IsProcessing = false;
 
 class Job extends Base {
 	constructor(context) {
 		super(context);
-		this.type = CONST.JOB._阿里聚安全安全资讯;
+		this.type = CONST.JOB._安全脉搏;
 		this.priority = CONST.PRIORITY.NORMAL;
 	}
 
@@ -18,12 +16,8 @@ class Job extends Base {
 		let priority = self.priority;
 		let superCreateMsg = super.createMsg.bind(self);
 
-		self.schedule.scheduleJob('*/26 * * * *', () => {
+		self.schedule.scheduleJob('*/5 * * * *', () => {
 		// self.schedule.scheduleJob('*/10 * * * * *', () => {
-
-			//阿里聚安全已经下线
-			return;
-
 			if(IsProcessing === true) {
 				self.logger.debug(`job ${self.type} is running, can not run again.`);
 				return;
@@ -34,8 +28,8 @@ class Job extends Base {
 
 			let startTime = new Date().getTime();
 			return _co(function *() {
-				let bJuAnQuan = self.BLL.createJuAnQuan(context);
-				let uris = yield bJuAnQuan.getArticleList();
+				let bAnQuanMaiBo = self.BLL.createAnQuanMaiBo(context);
+				let uris = yield bAnQuanMaiBo.getArticleList();
 
 				self.logger.debug("end of getArticleList");
 				for(let uri of uris) {
@@ -51,15 +45,14 @@ class Job extends Base {
 				return;
 			}).then(res => {
 				let endTime = new Date().getTime();
-				self.logger.info("JuAnQuan Job over. used time:", Math.round((endTime - startTime) / 1000));
+				self.logger.info("AnQuanMaiBo Job over. used time:", Math.round((endTime - startTime) / 1000));
 				IsProcessing = false;
 			}).catch(error => {
 				IsProcessing = false;
-				self.logger.error("JuAnQuan Job failed.");
+				self.logger.error("安全脉搏 Job failed.");
 				self.logger.error("error:", error.message);
 				self.logger.error("stack:", error.stack);
 			});
-
 		});
 	}
 
@@ -71,10 +64,10 @@ class Job extends Base {
 		return _co(function *() {
 			self.logger.debug("start excute job, data is: ", job.data.uri);
 			let uri = job.data.uri;
-			let bJuAnQuan = self.BLL.createJuAnQuan(context);
+			let bAnQuanMaiBo = self.BLL.createAnQuanMaiBo(context);
 
 			yield context.sequelize.transaction(() => {
-				return bJuAnQuan.procArticle({uri: uri});
+				return bAnQuanMaiBo.procArticle({uri: uri});
 			});
 			return;
 		});
