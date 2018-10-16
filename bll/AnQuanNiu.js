@@ -84,7 +84,10 @@ class AnQuan extends Base {
         return _co(function* (argument) {
             let $ = yield self.loadUri({uri: uri});
 
-            info.title = $("h2").eq(0).text();
+            info.title = $("h2").eq(0).text() || "";
+            if(info.title.length === 0) {
+                info.title = $(".blog-title").text();
+            }
             // info.excerpt = $(".content .desc").eq(0).text();
 
             let $content = $(".blog-excerpt");
