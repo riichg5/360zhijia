@@ -6,6 +6,9 @@ module.exports = function (sequelize, DataTypes) {
     return sequelize.define('wp_360_post', {
 		post_author: DataTypes.INTEGER,
 		post_date: DataTypes.DATE,
+		post_date_gmt: DataTypes.DATE,
+		post_modified: DataTypes.DATE,
+		post_modified_gmt: DataTypes.DATE,
 		post_content: DataTypes.STRING,
 		post_title: DataTypes.STRING,
 		post_status: DataTypes.STRING,

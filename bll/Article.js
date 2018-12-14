@@ -35,6 +35,9 @@ class Article extends Base {
 			let postModel = {
 				post_author: 1,
 				post_date: new Date(),
+				post_date_gmt: new Date(),
+				post_modified: new Date(),
+				post_modified_gmt: new Date(),
 				post_content: content,
 				post_title: _.trim(subject),
 				post_status: 'publish',
