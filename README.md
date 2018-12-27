@@ -1,6 +1,6 @@
 # super360
 
-此程序为 www.360zhijia.com 的配套爬虫程序。基于Kue基础上面实现的一套job挂载方式的爬虫程序。
+此程序为 https://www.360zhijia.com 的配套爬虫程序。基于Kue基础上面实现的一套job挂载方式的爬虫程序。
 
 ## 清理测试数据
 
