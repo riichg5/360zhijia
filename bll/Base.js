@@ -77,6 +77,16 @@ class Base {
         });
 	}
 
+	getPCRequestHeaders () {
+		return {
+			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+			"Accept-Encoding": "gzip, deflate, br",
+			"Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,de;q=0.6",
+			"Cache-Control": "no-cache",
+			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+		};
+	},
+
 	loadJSON (opts) {
 		let self = this;
 		let context = self.context;
@@ -87,6 +97,7 @@ class Base {
         if(charset) {
 			requestOpt = {
 	            uri: uri,
+	            headers: self.getPCRequestHeaders(),
 	            transform: function (body) {
 	            	body = iconv.decode(body, charset);
 	                return body;
@@ -97,6 +108,7 @@ class Base {
         } else {
 			requestOpt = {
 	            uri: uri,
+	            headers: self.getPCRequestHeaders(),
 	            transform: function (body) {
 	                return body;
 	            },
