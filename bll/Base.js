@@ -494,13 +494,13 @@ class Base {
 				self.logger.debug(`request pc ${url} success, used time: ${usedTime}`);
 		    }).then(() => {
 		    	startTime = new Date();
-		    	return request{
+		    	return request({
 		    		method: 'GET',
 		    		uri: url,
 		    		headers: {
 		    			"User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Mobile Safari/537.36",
 		    		}
-		    	}.then(htmlString => {
+		    	}).then(htmlString => {
 					let endTime = new Date();
 					let usedTime = endTime - startTime;
 					self.logger.debug(`request mobile ${url} success, used time: ${usedTime}`);
