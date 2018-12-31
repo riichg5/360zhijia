@@ -207,7 +207,7 @@ class Base {
 			let pOn = Promise.promisify(picStream.on).bind(picStream);
 
 			try {
-				let requestInfo = request.get({
+				let requestInfo = yield request.get({
 					uri: imgUrl,
 					timeout: 10 * 1000,
 					headers: self.getPCRequestHeaders()
