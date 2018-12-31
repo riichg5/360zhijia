@@ -226,7 +226,7 @@ class Base {
 			// 	};
 			// }
 
-			await request.get({
+			yield request.get({
 				uri: imgUrl,
 				timeout: 10 * 1000,
 				encoding: null,
