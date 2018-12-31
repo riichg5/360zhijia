@@ -226,6 +226,8 @@ class Base {
 			// 	};
 			// }
 
+			let isErrored = false;
+
 			yield request.get({
 				uri: imgUrl,
 				timeout: 10 * 1000,
@@ -237,7 +239,10 @@ class Base {
 			    fs.writeFileSync(imagePath, buffer);
 			}).catch(error => {
 				self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
+				isErrored = true;
+			});
 
+			if(isErrored) {
 				//返回默认的no-photo图片
 				return {
 					imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
@@ -245,7 +250,7 @@ class Base {
 					width: 250,
 					height: 250
 				};
-			});
+			}
 
 			self.logger.debug("saved....");
 			let info = {
