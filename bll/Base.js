@@ -210,14 +210,21 @@ class Base {
 				let requestInfo = request.get({
 					uri: imgUrl,
 					timeout: 10 * 1000,
-					headers: {
-
-					}
+					headers: self.getPCRequestHeaders()
 				}).pipe(picStream);
 
 				yield pOn('close');
 			} catch (error) {
-				return _reject(`download img error, error: ${error.message}, stack: ${error.stack}`);
+				self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
+
+				//返回默认的no-photo图片
+				return {
+					imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
+					imagWebPath: `/wp-content/uploads/site/no-photo.jpg`,
+					width: 250,
+					height: 250
+				};
+				// return _reject(`download img error, error: ${error.message}, stack: ${error.stack}`);
 			}
 
 			self.logger.debug("saved....");
