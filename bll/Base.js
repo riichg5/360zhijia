@@ -203,18 +203,39 @@ class Base {
 			let pMkdirp = Promise.promisify(mkdirp).bind(mkdirp);
 			yield pMkdirp(imgInfo.fullPath);
 
-			let picStream = fs.createWriteStream(imagePath);
-			let pOn = Promise.promisify(picStream.on).bind(picStream);
+			// let picStream = fs.createWriteStream(imagePath);
+			// let pOn = Promise.promisify(picStream.on).bind(picStream);
 
-			try {
-				let requestInfo = yield request.get({
-					uri: imgUrl,
-					timeout: 10 * 1000,
-					headers: self.getPCRequestHeaders()
-				}).pipe(picStream);
+			// try {
+			// 	let requestInfo = request.get({
+			// 		uri: imgUrl,
+			// 		timeout: 10 * 1000,
+			// 		headers: self.getPCRequestHeaders()
+			// 	}).pipe(picStream);
 
-				yield pOn('close');
-			} catch (error) {
+			// 	yield pOn('close');
+			// } catch (error) {
+			// 	self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
+
+			// 	//返回默认的no-photo图片
+			// 	return {
+			// 		imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
+			// 		imagWebPath: `/wp-content/uploads/site/no-photo.jpg`,
+			// 		width: 250,
+			// 		height: 250
+			// 	};
+			// }
+
+			await request.get({
+				uri: imgUrl,
+				timeout: 10 * 1000,
+				encoding: null,
+				headers: self.getPCRequestHeaders()
+			}).then(res => {
+			    // const buffer = Buffer.from(res, 'utf8');
+			    const buffer = Buffer.from(res);
+			    fs.writeFileSync(imagePath, buffer);
+			}).catch(error => {
 				self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
 
 				//返回默认的no-photo图片
@@ -224,8 +245,7 @@ class Base {
 					width: 250,
 					height: 250
 				};
-				// return _reject(`download img error, error: ${error.message}, stack: ${error.stack}`);
-			}
+			});
 
 			self.logger.debug("saved....");
 			let info = {
