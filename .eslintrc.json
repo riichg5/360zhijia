@@ -28,7 +28,8 @@
         "_co": true,
         "_throw": true,
         "_resolve": true,
-        "_reject": true
+        "_reject": true,
+        "_util": true
     },
     "rules": {
         "indent": ["off"],

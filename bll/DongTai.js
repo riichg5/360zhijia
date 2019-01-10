@@ -33,7 +33,7 @@ class DongTai extends Base {
 
                     baseNames.push(baseName);
 
-                    urls.push(link.attribs.href);
+                    urls.push(`http://www.360.cn${link.attribs.href}`);
                 }
             });
 
@@ -82,8 +82,8 @@ class DongTai extends Base {
         return _co(function* () {
             let $ = yield self.loadUri({uri: uri});
 
-            info.title = $("#title").text();
-            info.$content = $("#content");
+            info.title = $(".article-content h1").text();
+            info.$content = $(".content-text");
 
             return info;
         });
@@ -110,6 +110,27 @@ class DongTai extends Base {
         });
     }
 
+    _getArticleInfo (opts) {
+        let self = this;
+        let context = self.context;
+        let uri = opts.uri;
+        let info = {
+            title: "",
+            content: "",
+            excerpt: "",
+            uri: uri
+        };
+
+        return _co(function* () {
+            let $ = yield self.loadUri({uri: uri});
+
+            info.title = $(".article-content h1").text();
+            info.$content = $(".content-text");
+
+            return info;
+        });
+    }
+
     getArticleInfo (opts) {
         let self = this;
         let context = self.context;
@@ -117,18 +138,9 @@ class DongTai extends Base {
         let info = null;
 
         return _co(function* () {
-            self.logger.debug(``);
-            if(uri.indexOf('newslist') !== -1) {
-                info = yield self.getNewsListArticleInfo({
-                    uri: uri
-                });
-            } else if(uri.indexOf('news.html') !== -1) {
-                info = yield self.getWeiShiArticleInfo({
-                    uri: uri
-                });
-            } else {
-                self.logger.error(`uri: ${uri} is unknown type!`);
-            }
+            info = yield self._getArticleInfo({
+                uri: uri
+            });
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});
             let replaceInfo = yield self.procContentImgs({$html: info.$content});
