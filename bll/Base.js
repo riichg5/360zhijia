@@ -326,9 +326,10 @@ class Base {
 			// console.log(`images.eq(i).attr('src'): ${images.eq(i).attr('src')}`);
 			// console.log(`images.eq(i): ${images.eq(i).html()}`);
 
-			if(images.eq(i).attr('src') && images.eq(i).attr('src').indexOf('base64,') === -1) {
-				imgArray.push(images.eq(i));
-			}
+			// if(images.eq(i).attr('src') && images.eq(i).attr('src').indexOf('base64,') === -1) {
+			// 	imgArray.push(images.eq(i));
+			// }
+			imgArray.push(images.eq(i));
 		}
 
 		// self.logger.debug("images:", imgArray);
