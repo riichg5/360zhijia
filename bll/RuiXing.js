@@ -95,14 +95,15 @@ class RuiXing extends Base {
             let $ = yield self.loadUri({uri: uri});
 
             if(uri.indexOf('weixin') !== -1) {
-                info.title = $("#activity-name").text();
+                info.title = $("#activity-name").text().trim();
                 info.$content = $("#js_content");
             } else if(uri.indexOf('rising') !== -1) {
-                info.title = $("article").find("h1").eq(0).text();
+                info.title = $("article").find("h1").eq(0).text().trim();
                 info.$content = $("article");
                 info.$content.find("h1").eq(0).remove();
                 info.$content.find("p.small").eq(0).remove();
                 info.$content.find("div.sharebaidu").remove();
+                info.$content.find("blockquote").remove();
             }
 
             yield self.baseHtmlProcess({$content: info.$content, uri: uri});

@@ -303,7 +303,7 @@ class Base {
 			src = $img.attr('src');
 		}
 
-		if(src.indexOf('http://') === -1) {
+		if(src.indexOf('http://') === -1 || src.indexOf('https://') === -1) {
 			src = url.resolve(uri, encodeURI(src));
 		}
 
@@ -323,7 +323,10 @@ class Base {
 
 		for(let i = 0; i < images.length; i++) {
 			//base64图片不用下载
-			if(images.eq(i).attr('src').indexOf('base64,') === -1) {
+			// console.log(`images.eq(i).attr('src'): ${images.eq(i).attr('src')}`);
+			// console.log(`images.eq(i): ${images.eq(i).html()}`);
+
+			if(images.eq(i).attr('src') && images.eq(i).attr('src').indexOf('base64,') === -1) {
 				imgArray.push(images.eq(i));
 			}
 		}
