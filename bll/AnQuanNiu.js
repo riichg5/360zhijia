@@ -94,6 +94,8 @@ class AnQuan extends Base {
             $content.find(".blog-single-head").remove();
             $content.find('span').removeAttr("style");
             $content.find('img').removeAttr("srcset");
+            $content.find("p:contains('相关阅读')").eq(0).next().remove();
+            $content.find("p:contains('相关阅读')").eq(0).remove();
             info.$content = $content.eq(0);
 
             info.excerpt = self.getExcerpt(info.$content.text());
