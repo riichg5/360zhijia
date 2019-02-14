@@ -39,6 +39,42 @@
 		"img": "<a href=\"/wp-content/uploads/2017/09/kuaijianqie.jpg\"><img class=\"aligncenter size-medium wp-image-303762\" src=\"/wp-content/uploads/2017/09/kuaijianqie-300x155.jpg\" alt=\"\" width=\"300\" height=\"155\" /></a>"
 	},
 	{
+		"name": "360手机N7Pro",
+		"uri": "https://bbs.360.cn/forum-7545-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "18 */2 * * *",
+		"tagIds": [509],
+		"categoryId": 509,
+		"deepPageCount": 4,
+		"keyWords": ["360", "手机", "N7", "Pro"],
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7pro_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7pro_small.jpg\" width=\"600\" height=\"756\" /></a>"
+	},
+	{
+		"name": "360手机N7Lite",
+		"uri": "https://bbs.360.cn/forum-7546-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "17 */2 * * *",
+		"tagIds": [509],
+		"categoryId": 509,
+		"deepPageCount": 4,
+		"keyWords": ["360", "手机", "N7", "Lite"],
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7lite_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7lite_small.jpg\" width=\"600\" height=\"649\" /></a>"
+	},
+	{
+		"name": "360手机N7",
+		"uri": "https://bbs.360.cn/forum-7476-1.html",
+		"needReply": true,
+		"priority": "normal",
+		"cron": "16 */2 * * *",
+		"tagIds": [509],
+		"categoryId": 509,
+		"deepPageCount": 4,
+		"keyWords": ["360", "手机", "N7"],
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7_small.jpg\" width=\"600\" height=\"743\" /></a>"
+	},
+	{
 		"name": "360手机N6Lite",
 		"uri": "http://bbs.360.cn/forum-7426-1.html",
 		"needReply": true,
