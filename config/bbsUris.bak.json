@@ -48,7 +48,7 @@
 		"categoryId": 509,
 		"deepPageCount": 4,
 		"keyWords": ["360", "手机", "N7", "Pro"],
-		"img": "<a href=\"/wp-content/uploads/2019/02/n7pro_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7pro_small.jpg\" width=\"600\" height=\"756\" /></a>"
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7pro_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7pro_small.jpg\" width=\"280\" /></a>"
 	},
 	{
 		"name": "360手机N7Lite",
@@ -60,7 +60,7 @@
 		"categoryId": 509,
 		"deepPageCount": 4,
 		"keyWords": ["360", "手机", "N7", "Lite"],
-		"img": "<a href=\"/wp-content/uploads/2019/02/n7lite_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7lite_small.jpg\" width=\"600\" height=\"649\" /></a>"
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7lite_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7lite_small.jpg\" width=\"280\" /></a>"
 	},
 	{
 		"name": "360手机N7",
@@ -72,7 +72,7 @@
 		"categoryId": 509,
 		"deepPageCount": 4,
 		"keyWords": ["360", "手机", "N7"],
-		"img": "<a href=\"/wp-content/uploads/2019/02/n7_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7_small.jpg\" width=\"600\" height=\"743\" /></a>"
+		"img": "<a href=\"/wp-content/uploads/2019/02/n7_small.jpg\"><img class=\"aligncenter \" src=\"/wp-content/uploads/2019/02/n7_small.jpg\" width=\"280\" /></a>"
 	},
 	{
 		"name": "360手机N6Lite",
