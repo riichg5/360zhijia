@@ -61,7 +61,6 @@ class Base {
         if(charset) {
 			requestOpt = {
 	            uri: uri,
-	            headers: self.getPCRequestHeaders(),
 	            transform: function (body) {
 	            	body = iconv.decode(body, charset);
 	                return cheerio.load(body);
@@ -71,8 +70,8 @@ class Base {
         } else {
 			requestOpt = {
 	            uri: uri,
-	            headers: self.getPCRequestHeaders(),
 	            transform: function (body) {
+	            	console.log(`----> body: ${body}`);
 	                return cheerio.load(body);
 	            }
 	        };
