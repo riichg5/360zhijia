@@ -635,9 +635,13 @@ class QQ extends Base {
         let self = this;
         let content = opts.content;
 
-        if(content.indexOf('<img') === -1) {
-            content = "<p>"+ self.img + "</p>" + content;
-        }
+        // if(content.indexOf('<img') === -1) {
+        //     content = "<p>"+ self.img + "</p>" + content;
+        // }
+
+        //因为这个论坛图片的mime类型有问题，导致不能生成缩略图，所以默认都加上默认图片
+        //thumbnail.php会报错， The image being resized is not a valid gif, jpg or png.
+        content = "<p>"+ self.img + "</p>" + content;
 
         return content;
     }
