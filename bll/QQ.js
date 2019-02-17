@@ -36,7 +36,7 @@ class QQ extends Base {
         let createMsgFunc = opts.createMsgFunc;
 
         return _co(function* () {
-            let $firstPage = yield self.loadUri({uri: self.uri});
+            let $firstPage = yield self.loadUri({uri: self.uri, charset: "utf8"});
 
             console.log(`----> html: ${$firstPage.html()}`);
 
