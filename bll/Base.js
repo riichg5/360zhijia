@@ -242,12 +242,12 @@ class Base {
 	            	imageminMozjpeg({
 	            		quality: 45
 	            	}),
-	            	// imageminPngquant({
-	            	// 	quality: [0.3, 0.4]
-	            	// }),
-	            	imageminOptipng({
-	            		optimizationLevel: 4
+	            	imageminPngquant({
+	            		quality: [0.3, 0.4]
 	            	}),
+	            	// imageminOptipng({
+	            	// 	optimizationLevel: 4
+	            	// }),
 	            	imageminGifsicle({
 	            		optimizationLevel: 2,
 	            		colors: 200
