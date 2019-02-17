@@ -160,16 +160,18 @@ class QQ extends Base {
     getFormMaxPageCount ($) {
         let self = this;
         let context = self.context;
-        let pageText = $("span[title^='共']").eq(0);
 
-        if(pageText && pageText.length !== 0) {
-            let maxPage = parseInt(_.trim(pageText.text().replace(/页/gi,"").replace(/\//gi, "")), 10);
-            self.logger.debug(`current page count: ${maxPage}`);
-            return maxPage;
-        } else {
-            self.logger.debug(`current page count: 1`);
-            return 1;
-        }
+        return 5;
+        // let pageText = $("span[title^='共']").eq(0);
+
+        // if(pageText && pageText.length !== 0) {
+        //     let maxPage = parseInt(_.trim(pageText.text().replace(/页/gi,"").replace(/\//gi, "")), 10);
+        //     self.logger.debug(`current page count: ${maxPage}`);
+        //     return maxPage;
+        // } else {
+        //     self.logger.debug(`current page count: 1`);
+        //     return 1;
+        // }
     }
 
     getThreadMaxPageCount ($) {
