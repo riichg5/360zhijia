@@ -37,6 +37,7 @@ class QQ extends Base {
 
         return _co(function* () {
             let $firstPage = yield self.loadUri({uri: self.uri});
+            yield _utils.sleep(10000);
 
             console.log(`----> html: ${$firstPage.html()}`);
 
@@ -56,6 +57,7 @@ class QQ extends Base {
                     let uri = self.getForumPageUrl({pageUrl: self.uri, pageNum: forumPageNum});
                     self.logger.debug(`forum page number is: ${forumPageNum}, uri is: ${uri}`);
                     $ = yield self.loadUri({uri: uri});
+                    yield _utils.sleep(10000);
                 }
 
                 let uris = self.getForumResolvedUris($) || [];
@@ -654,6 +656,7 @@ class QQ extends Base {
         };
 
         let $ = await self.loadUri({uri: threadUri});
+        await _utils.sleep(10000);
         let threadTitle = self.getThreadTitle($);
         let threadPageCount = self.getThreadMaxPageCount($);
         let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
@@ -682,6 +685,7 @@ class QQ extends Base {
                     pageNum: pageNum
                 });
                 pageCheerio = await self.loadUri({uri: pageUri});
+                await _utils.sleep(10000);
             } else {
                 pageUri = threadUri;
                 pageCheerio = $;
