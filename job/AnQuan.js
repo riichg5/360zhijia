@@ -1,4 +1,4 @@
-// 360安全客   http://bobao.360.cn/
+// 360安全客   https://api.anquanke.com
 
 let Base = require('./Base');
 let IsProcessing = false;

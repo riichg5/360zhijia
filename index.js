@@ -8,7 +8,7 @@ let context = {};
 //为context添加sequelize orm
 require(_base + 'lib/initSequelize')(path.join(_base, './models'), context);
 
-console.log(`=================> context.models: `, _util.inspect(context.models, {depth: 3}));
+// console.log(`=================> context.models: `, _util.inspect({obj: context.models, depth: 3}));
 
 //KUE配置
 kue.app.set('title', _config.get("kue.title"));

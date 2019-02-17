@@ -11,6 +11,12 @@ let mkdirp = require('mkdirp');
 let Promise = require('bluebird');
 let sizeOf = Promise.promisify(require('image-size'));
 const md5File = require('md5-file/promise');
+const fileType = require('file-type');
+const imagemin = require('imagemin');
+const imageminMozjpeg = require('imagemin-mozjpeg');
+const imageminPngquant = require('imagemin-pngquant');
+const imageminGifsicle = require('imagemin-gifsicle');
+const imageminWebp = require('imagemin-webp');
 
 let iconv = require('iconv-lite');
 
@@ -187,103 +193,121 @@ class Base {
 		}
 	}
 
-	imgDownload (opts) {
+	async imgDownload (opts) {
 		let self = this;
 		let imgUrl = opts.imgUrl.trim();
 		let imgInfo = self.getImageFolderName();
 		let ext = self.getImgExt(imgUrl); //path.parse(imgUrl).ext;
 		let uuidVal = uuid.v4();
-		let imageName = path.join(imgInfo.webPath, uuidVal + ext);
-		let imagePath = path.join(imgInfo.fullPath, uuidVal + ext);
+		let imageName = "";
+		let imagePath = "";
 
-		self.logger.debug("start get imgUrl:", imgUrl);
-		self.logger.debug("will be save to", imagePath);
+		let pMkdirp = Promise.promisify(mkdirp).bind(mkdirp);
+		await pMkdirp(imgInfo.fullPath);
 
-		return _co(function* () {
-			let pMkdirp = Promise.promisify(mkdirp).bind(mkdirp);
-			yield pMkdirp(imgInfo.fullPath);
+		let isErrored = false;
 
-			// let picStream = fs.createWriteStream(imagePath);
-			// let pOn = Promise.promisify(picStream.on).bind(picStream);
-
-			// try {
-			// 	let requestInfo = request.get({
-			// 		uri: imgUrl,
-			// 		timeout: 10 * 1000,
-			// 		headers: self.getPCRequestHeaders()
-			// 	}).pipe(picStream);
-
-			// 	yield pOn('close');
-			// } catch (error) {
-			// 	self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
-
-			// 	//返回默认的no-photo图片
-			// 	return {
-			// 		imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
-			// 		imagWebPath: `/wp-content/uploads/site/no-photo.jpg`,
-			// 		width: 250,
-			// 		height: 250
-			// 	};
-			// }
-
-			let isErrored = false;
-
-			yield request.get({
+		try {
+			let res = await request.get({
 				uri: imgUrl,
 				timeout: 10 * 1000,
 				encoding: null,
 				headers: self.getPCRequestHeaders()
-			}).then(res => {
-			    // const buffer = Buffer.from(res, 'utf8');
-			    const buffer = Buffer.from(res);
-			    fs.writeFileSync(imagePath, buffer);
-			}).catch(error => {
-				self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
-				isErrored = true;
 			});
 
-			if(isErrored) {
-				//返回默认的no-photo图片
-				return {
-					imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
-					imagWebPath: `/wp-content/uploads/site/no-photo.jpg`,
-					width: 250,
-					height: 250
-				};
-			}
+		    // const buffer = Buffer.from(res, 'utf8');
+		    let buffer = Buffer.from(res);
+		    let bufferSizeBeforeMinify = buffer.length;
+		    let bufferSizeAfterMinify = buffer.length;
 
-			self.logger.debug("saved....");
-			let info = {
-				width: 600,
-				height: 600
+		    if(!ext) {
+		    	let imageTypeInfo = fileType(Buffer.from(buffer, 0, fileType.minimumBytes));
+		    	ext = "." + imageTypeInfo.ext;
+		    }
+
+		    imageName = path.join(imgInfo.webPath, uuidVal + ext);
+		    imagePath = path.join(imgInfo.fullPath, uuidVal + ext);
+
+			self.logger.debug(`
+				start get imgUrl: ${imgUrl},
+				will be save to: ${imagePath},
+				ext: ${ext}
+			`);
+
+			//minify image
+			buffer = await imagemin.buffer(buffer, {
+				plugins: [
+	            	imageminMozjpeg({
+	            		quality: 45
+	            	}),
+	            	imageminPngquant({
+	            		quality: [0.3, 0.4]
+	            	}),
+	            	imageminGifsicle({
+	            		optimizationLevel: 2,
+	            		colors: 200
+	            	}),
+	            	imageminWebp({
+	            		quality: 45
+	            	})
+	        	]
+	       	});
+
+	       	bufferSizeAfterMinify = buffer.length;
+
+	       	self.logger.debug(`
+	       		imagePath: ${imagePath},
+	       		bufferSizeBeforeMinify: ${bufferSizeBeforeMinify},
+	       		bufferSizeAfterMinify: ${bufferSizeAfterMinify}
+	       	`);
+
+		    fs.writeFileSync(imagePath, buffer);
+		} catch (error) {
+			self.logger.warn(`download img error, error: ${error.message}, stack: ${error.stack}`);
+			isErrored = true;
+		}
+
+		if(isErrored) {
+			//返回默认的no-photo图片
+			return {
+				imagePath: `/mnt/data/www/360zhijia/wp-content/uploads/site/no-photo.jpg`,
+				imagWebPath: `/wp-content/uploads/site/no-photo.jpg`,
+				width: 250,
+				height: 250
 			};
+		}
 
-			//获取hash值
-			let md5 = yield md5File(imagePath);
-			md5 = md5.toLowerCase();
-			let newImagePath = path.join(imgInfo.fullPath, md5 + ext);
-			let newImageName = path.join(imgInfo.webPath, md5 + ext);
+		self.logger.debug("saved....");
+		let info = {
+			width: 600,
+			height: 600
+		};
 
-			fs.renameSync(imagePath, newImagePath);
-			self.logger.debug(`imagePath----> ${imagePath}, newImagePath(md5)----> ${newImagePath}`);
+		//获取hash值
+		let md5 = await md5File(imagePath);
+		md5 = md5.toLowerCase();
+		let newImagePath = path.join(imgInfo.fullPath, md5 + ext);
+		let newImageName = path.join(imgInfo.webPath, md5 + ext);
 
-			try {
-				info = yield sizeOf(newImagePath);
-			} catch(error) {
-				self.logger.debug(`size of ${newImagePath} error: ${error.message}`);
-			}
+		fs.renameSync(imagePath, newImagePath);
+		self.logger.debug(`imagePath----> ${imagePath}, newImagePath(md5)----> ${newImagePath}`);
 
-			self.logger.debug(`image info: width:${info.width}, height:${info.height}`);
-			let res = {
-				imagePath: newImagePath,
-				imagWebPath: newImageName,
-				width: info.width,
-				height: info.height
-			};
+		try {
+			info = await sizeOf(newImagePath);
+		} catch(error) {
+			self.logger.debug(`size of ${newImagePath} error: ${error.message}`);
+		}
 
-			self.logger.debug("imgDownload returned:", res);
-			return res;
-		});
+		self.logger.debug(`image info: width:${info.width}, height:${info.height}`);
+		let res = {
+			imagePath: newImagePath,
+			imagWebPath: newImageName,
+			width: info.width,
+			height: info.height
+		};
+
+		self.logger.debug("imgDownload returned:", res);
+		return res;
 	}
 
 	isWeiXinUri (uri) {

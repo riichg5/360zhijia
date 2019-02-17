@@ -29,7 +29,8 @@
         "_throw": true,
         "_resolve": true,
         "_reject": true,
-        "_util": true
+        "_util": true,
+        "URL": true
     },
     "rules": {
         "indent": ["off"],

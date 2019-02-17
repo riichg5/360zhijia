@@ -1,7 +1,6 @@
 let Base = require('./Base');
 let cheerio = require('cheerio');
 let request = require('request-promise');
-let Promise = require('bluebird');
 let url = require('url');
 let configs = require(_base + 'config/qqUris.json');
 
@@ -18,6 +17,7 @@ class QQ extends Base {
         this.name = config.name;
         this.img = config.img;
         this.uri = config.uri;
+        this.originUrl = new URL(config.uri).origin;
         this.needReply = config.needReply;
         this.priority = config.priority;
         this.cron = config.cron;
@@ -106,32 +106,30 @@ class QQ extends Base {
     }
 
     getForumTitle ($) {
-        let title = $("a.forum-title").text();
-
-        this.logger.debug(`forum title is: ${title}`);
-        return title;
+        return this.getThreadTitle($);
     }
 
     getThreadTitle ($) {
-        let breadcrumbs = $("#pt").find("a");
+        let breadcrumbs = $(".page_nav").find("a");
 
         if(breadcrumbs.length < 2) {
             return null;
         }
 
-        let title = breadcrumbs.eq(breadcrumbs.length - 2).text();
+        let title = breadcrumbs.eq(breadcrumbs.length - 1).text();
         this.logger.debug(`thread title is: ${title}`);
         return title.trim();
     }
 
     getConfigByThreadTitle (opts) {
+        let self = this;
         let threadTitle = opts.threadTitle;
         let config = _.find(configs, config => {
             return config.name === threadTitle;
         });
 
         if(!config) {
-            throw new Error(`can't find config in bbsUris.json by threadTitle: ${threadTitle}.`);
+            throw new Error(`can't find config in bbsUris.json by threadTitle: ${threadTitle}. uri: ${self.uri}`);
         }
         return config;
     }
@@ -140,7 +138,7 @@ class QQ extends Base {
         let self = this;
         let $ = opts.$;
         let threadTitle = opts.threadTitle;
-        let subject = $('#thread_subject').text() || "";
+        let subject = $(".title span").text().trim(); //$('#thread_subject').text() || "";
         let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
         let keyWords = config.keyWords || [];
         let isContains = false;
@@ -179,11 +177,14 @@ class QQ extends Base {
         let context = self.context;
         let count = 1;
 
-        if(!self.needReply) {
-            count = 1;
-        }
-        count = self.getFormMaxPageCount($);
-        return count;
+        //写死
+        return 1;
+
+        // if(!self.needReply) {
+        //     count = 1;
+        // }
+        // count = self.getFormMaxPageCount($);
+        // return count;
     }
 
     getUrlByPath (path) {
@@ -213,13 +214,13 @@ class QQ extends Base {
         let self = this;
         let context = self.context;
         $("span[title^='共']").eq(0);
-        let posts = $("tbody[id^='normalthread_']");
+        let posts = $(".threadItem");
         let uris = [];
 
         for(let i=0; i<posts.length; i++) {
             let img = null;
             let post = posts.eq(i);
-            let href = post.find("a[style='color: #3C9D40']");
+            let href = post.find("a[style='color:#2e8b57;']");
 
             if(href.length) {
                 let postLink = href.eq(0);
@@ -254,35 +255,9 @@ class QQ extends Base {
         return splits.join('-');
     }
 
-    // getForumPageUrl (opts) {
-    //     let self = this;
-
-    //     return self.getThreadPageUrl(opts);
-    // }
-
-    // getThreadPageUrl (opts) {
-    //     let self = this;
-    //     let url = opts.pageUrl;
-    //     let pageNum = opts.pageNum;
-
-    //     //url格式： http://bbs.guanjia.qq.com/forum.php?mod=viewthread&tid=5286673&extra=page%3D1&page=3
-    //     if(url.indexOf('&page=') === -1) {
-    //         return `${url}&page=${pageNum}`;
-    //     } else {
-    //         let splits = url.split("&");
-    //         for(let i=0; i<splits.length; i++) {
-    //             if(splits[i].indexOf('page=') !== -1) {
-    //                 splits[i] = `page=${pageNum}`;
-    //                 break;
-    //             }
-    //         }
-    //         return splits.join('&');
-    //     }
-    // }
-
     getPostDivs (opts) {
         let $ = opts.$;
-        return $("#postlist").children("div[id*=post_]");
+        return $(".threadItem");
     }
 
     //保留strong标签内容
@@ -315,29 +290,10 @@ class QQ extends Base {
         let self = this;
         self.retainCenterFont($div);
         self.retainStrong($div);
-        $div.find(".pstatus").remove();
-        $div.find('.quote').remove();   //去掉引用显示
-        $div.find('.authi').remove();   //除去发表时间
-        $div.find('style').remove();    //删除样式代码
-        $div.find('script').remove();    //删除样式代码
-        $div.find("div[class='ptg mbm']").remove();  //删除关键字
-        $div.find('#k_favorite').remove();  //删除收藏
-        $div.find('#sh_sina_thread').remove();  //删除分享
-        $div.find('#recommend_add').remove();   //删除支持
-        $div.find('#recommend_subtract').remove();  //删除反对
-        $div.find('.plc .plm').remove();  //删除相关帖子
-        $div.find('.shareBox').remove();  //删除分享
-        $div.find("div[id^=aimg_]").remove();   //删除上传图片下载提示层
-        $div.find("div[id^=comment_]").remove();    //删除点评
-        $div.find("a[class=xw1]").remove();     //删除用户帖子上传图片说明
-        $div.find("em[class=xg1]").remove();    //删除用户帖子上传图片说明
-        $div.find("div[class=tip_c]").remove(); //删除用户帖子上传图片说明
-        $div.find("div[class='tip tip_4 aimg_tip'][disautofocus='true']").remove(); //删除智能社区图片下面的下载和上传信息
-        $div.find("div[class='modact']").remove();  //删除智能社区添加图章的内容
-        $div.find("div[class='article-functions']").remove(); //删除结尾回复 评论 点赞等
-        $div.find("div[class='po phoneversion']").remove(); //删除来之XXX版本手机终端
-        $div.find("dl[class='rate']").remove();  //删除首帖下面的评分信息
-        $div.find("p[class='mbn']").remove();
+        $div.find("i[class='update']").remove();
+        $div.find("div[class='quote quoteItem']").remove();
+        $div.find("div[class='clear thread_main_time']").remove();
+        $div.find("div[class='thread_foot report']").remove();
     }
 
     isWorkerReply (opts) {
@@ -345,14 +301,12 @@ class QQ extends Base {
         let context = self.context;
         let $div = opts.$div;
 
-        let content = $div.find("font").text();
-        self.logger.debug(`content: ${content}`);
-        let indexOf = [
-            '论坛版主'
-        ].indexOf(content);
-        self.logger.debug(`['论坛版主'] indexOf is: ${indexOf}`);
+        let content = $div.find(".thread_level").text().trim();
+        // self.logger.debug(`content: ${content}`);
+        let indexOf = content.indexOf("版主");
+        self.logger.debug(`['版主'] indexOf is: ${indexOf}`);
 
-        return indexOf > -1;
+        return indexOf !== -1;
     }
 
     quoteContentFormat (opts) {
@@ -504,7 +458,7 @@ class QQ extends Base {
 
     markCommonImgs ($div) {
         let self = this;
-        let $imgs = $div.find("img[src^='http://']");
+        let $imgs = $div.find("img[src^='http']");
 
         if($imgs.length > 0) {
             for(let i=0; i<$imgs.length; i++) {
@@ -518,11 +472,28 @@ class QQ extends Base {
         }
     }
 
+    markAjaxImgs ($div) {
+        let self = this;
+        let $imgs = $div.find("img[src^='/ajax']");
+
+        if($imgs.length > 0) {
+            for(let i=0; i<$imgs.length; i++) {
+                let url = self.originUrl + $imgs.eq(i).attr('src');
+                let pos = self.imgUrlsInfos.length;
+
+                self.imgUrlsInfos.push({pos: pos, url: url});
+                cheerio(`<p>[[[img${pos}]]]</p>`).insertBefore($imgs.eq(i));
+            }
+            self.logger.debug(`include image amount: ${$imgs.length}`);
+        }
+    }
+
     markImgs ($div) {
         let self = this;
-        self.markDiscuzImgs($div);
-        self.markDirectImgs($div);
+        // self.markDiscuzImgs($div);
+        // self.markDirectImgs($div);
         self.markCommonImgs($div);
+        self.markAjaxImgs($div);
     }
 
     downImgs () {
@@ -559,28 +530,19 @@ class QQ extends Base {
 
         return _co(function* () {
             self.removeExcess($div);
-            let $firstTr = $div.find('table').eq(0).find("tr").eq(0);
-            if(!$firstTr) {
-                throw new Error("can not find $firstTr");
-            }
 
-            let $secondTd = $firstTr.find('.plc').eq(0);
-            if(!$secondTd) {
-                throw new Error("can not find $secondTd");
-            }
-
-            let $secondDiv = $secondTd.children('div[class=pct]').eq(0);
-            if(!$secondDiv) {
+            let $contentDiv = $div.find('div[class=thread_main]');
+            if(!$contentDiv) {
                 throw new Error("can not find $secondDiv");
             }
 
             let isWorkerReply = self.isWorkerReply({$div: $div});
             self.logger.debug(`isWorkerReply: ${isWorkerReply}`);
 
-            self.markImgs($secondDiv);
+            self.markImgs($contentDiv);
 
             let attrs = {
-                content: $secondDiv.text(),
+                content: $contentDiv.text(),
                 color: null,
                 block: "[[content]]"
             };
@@ -675,7 +637,7 @@ class QQ extends Base {
         return content;
     }
 
-    getArticleInfo (opts) {
+    async getArticleInfo (opts) {
         let self = this;
         let context = self.context;
         let threadUri = opts.threadUri;
@@ -686,61 +648,59 @@ class QQ extends Base {
             uri: threadUri
         };
 
-        return _co(function* (argument) {
-            let $ = yield self.loadUri({uri: threadUri});
-            let threadTitle = self.getThreadTitle($);
-            let threadPageCount = self.getThreadMaxPageCount($);
-            let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
+        let $ = await self.loadUri({uri: threadUri});
+        let threadTitle = self.getThreadTitle($);
+        let threadPageCount = self.getThreadMaxPageCount($);
+        let config = self.getConfigByThreadTitle({threadTitle: threadTitle});
 
-            info.title = self.getThreadSubject({
-                $: $,
-                threadTitle: config.name
+        info.title = self.getThreadSubject({
+            $: $,
+            threadTitle: config.name
+        });
+
+        //不需要回复，则只爬第一页
+        if(!config.needReply) {
+            threadPageCount = 1;
+        }
+
+        let content = {
+            pageAmount: threadPageCount
+        };
+
+        for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
+            let pageCheerio = $;
+            let pageUri;
+
+            if(pageNum !== 1) {
+                pageUri = self.getThreadPageUrl({
+                    pageUrl: threadUri,
+                    pageNum: pageNum
+                });
+                pageCheerio = await self.loadUri({uri: pageUri});
+            } else {
+                pageUri = threadUri;
+                pageCheerio = $;
+            }
+
+            let childPageDivContents = await self.getThreadContent({
+                page$: pageCheerio,
+                needReply: config.needReply,
+                threadPageNum: pageNum,
+                pageUri: pageUri,
             });
 
-            //不需要回复，则只爬第一页
-            if(!config.needReply) {
-                threadPageCount = 1;
-            }
+            content[pageNum] = childPageDivContents;
+        }
 
-            let content = {
-                pageAmount: threadPageCount
-            };
+        info.content = self.getCommonPageHtml(content);
+        info.content = self.addTopImg({content: info.content});
 
-            for(var pageNum=1; pageNum<=threadPageCount; pageNum++) {
-                let pageCheerio = $;
-                let pageUri;
+        //不需要恢复的话，则需要设置摘要
+        // if(!config.needReply) {
+            info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
+        // }
 
-                if(pageNum !== 1) {
-                    pageUri = self.getThreadPageUrl({
-                        pageUrl: threadUri,
-                        pageNum: pageNum
-                    });
-                    pageCheerio = yield self.loadUri({uri: pageUri});
-                } else {
-                    pageUri = threadUri;
-                    pageCheerio = $;
-                }
-
-                let childPageDivContents = yield self.getThreadContent({
-                    page$: pageCheerio,
-                    needReply: config.needReply,
-                    threadPageNum: pageNum,
-                    pageUri: pageUri,
-                });
-
-                content[pageNum] = childPageDivContents;
-            }
-
-            info.content = self.getCommonPageHtml(content);
-            info.content = self.addTopImg({content: info.content});
-
-            //不需要恢复的话，则需要设置摘要
-            // if(!config.needReply) {
-                info.excerpt = self.getExcerpt(cheerio.load(info.content).text()) || null;
-            // }
-
-            return info;
-        });
+        return info;
     }
 }
 

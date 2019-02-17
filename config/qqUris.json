@@ -2,10 +2,10 @@
 	{
 		"name": "问题反馈",
 		"aliasName": "腾讯电脑管家",
-		"uri": "http://bbs.guanjia.qq.com/forum-77-1.html",
+		"uri": "https://bbs.guanjia.qq.com/forum-271-1.html",
 		"needReply": true,
 		"priority": "normal",
-		"cron": "43 */1 * * *",
+		"cron": "*/17 * * * *",
 		"tagIds": [500],
 		"categoryId": 500,
 		"deepPageCount": 3,
