@@ -71,7 +71,7 @@ class Base {
 			requestOpt = {
 	            uri: uri,
 	            transform: function (body) {
-	            	console.log(`----> body: ${body}`);
+	            	// console.log(`----> body: ${body}`);
 	                return cheerio.load(body);
 	            }
 	        };

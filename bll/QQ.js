@@ -39,8 +39,6 @@ class QQ extends Base {
             let $firstPage = yield self.loadUri({uri: self.uri});
             yield _utils.sleep(10000);
 
-            console.log(`----> html: ${$firstPage.html()}`);
-
             let forumMaxPageNum = self.getFormMaxPageCount($firstPage);
             self.logger.debug(`forum max number is: ${forumMaxPageNum}`);
             let maxPageNum = forumMaxPageNum >= self.deepPageCount ? self.deepPageCount : forumMaxPageNum;
