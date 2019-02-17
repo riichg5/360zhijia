@@ -15,6 +15,7 @@ const fileType = require('file-type');
 const imagemin = require('imagemin');
 const imageminMozjpeg = require('imagemin-mozjpeg');
 const imageminPngquant = require('imagemin-pngquant');
+const imageminOptipng = require('imagemin-optipng');
 const imageminGifsicle = require('imagemin-gifsicle');
 const imageminWebp = require('imagemin-webp');
 
@@ -241,8 +242,11 @@ class Base {
 	            	imageminMozjpeg({
 	            		quality: 45
 	            	}),
-	            	imageminPngquant({
-	            		quality: [0.3, 0.4]
+	            	// imageminPngquant({
+	            	// 	quality: [0.3, 0.4]
+	            	// }),
+	            	imageminOptipng({
+	            		optimizationLevel: 4
 	            	}),
 	            	imageminGifsicle({
 	            		optimizationLevel: 2,
