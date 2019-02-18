@@ -542,6 +542,16 @@ class Base {
 		return `${siteUrl}${categoryName}/${postId}.html`;
 	}
 
+	getProxyServersPageUrls (opts) {
+		let categoryName = opts.categoryName;
+		let postId = opts.postId;
+
+		return [
+			`http://45.192.167.10:3002/${categoryName}/${postId}.html`,
+			`http://45.192.160.159:3002/${categoryName}/${postId}.html`
+		];
+	}
+
 	getBaiduMipPageUri (opts) {
 		let siteUrl = _config.get("mobileSiteUrl");
 		let categoryName = opts.categoryName;
@@ -608,10 +618,12 @@ class Base {
 	            return yield _reject("can not get category.");
 	        }
 	        let pageUrl = self.getPageUri({postId: postId, categoryName: categoryName});
-	        let baiduMipPageUrl = self.getBaiduMipPageUri({postId: postId, categoryName: categoryName});
+	        // let baiduMipPageUrl = self.getBaiduMipPageUri({postId: postId, categoryName: categoryName});
+	        let proxyServersPageUrls = self.getProxyServersPageUrls({postId: postId, categoryName: categoryName});
 
 	        yield [
-	        	self.requestPageUrl({url: pageUrl}),
+	        	self.requestPageUrl({url: proxyServersPageUrls[0]}),
+	        	self.requestPageUrl({url: proxyServersPageUrls[1]}),
 	        	bPush.pushToAll({uri: pageUrl}),
 	        ];
 		});
