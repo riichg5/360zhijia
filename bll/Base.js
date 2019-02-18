@@ -237,34 +237,31 @@ class Base {
 			`);
 
 			//minify image
-			// buffer = await imagemin.buffer(buffer, {
-			// 	plugins: [
-	  //           	imageminMozjpeg({
-	  //           		quality: 45
-	  //           	}),
-	  //           	imageminPngquant({
-	  //           		quality: [0.3, 0.4]
-	  //           	}),
-	  //           	// imageminOptipng({
-	  //           	// 	optimizationLevel: 4
-	  //           	// }),
-	  //           	imageminGifsicle({
-	  //           		optimizationLevel: 2,
-	  //           		colors: 200
-	  //           	}),
-	  //           	imageminWebp({
-	  //           		quality: 45
-	  //           	})
-	  //       	]
-	  //      	});
+			buffer = await imagemin.buffer(buffer, {
+				plugins: [
+	            	imageminMozjpeg({
+	            		quality: 45
+	            	}),
+	            	imageminPngquant({
+	            		quality: [0.3, 0.4]
+	            	}),
+	            	imageminGifsicle({
+	            		optimizationLevel: 2,
+	            		colors: 128
+	            	}),
+	            	// imageminWebp({  一定记住，这里imageminWebp不能和上面的一起用，因为imageminWebp里面会处理gif png jpg这些..导致图片损坏
+	            	// 	quality: 45
+	            	// })
+	        	]
+	       	});
 
 	       	bufferSizeAfterMinify = buffer.length;
 
-	       	// self.logger.debug(`
-	       	// 	imagePath: ${imagePath},
-	       	// 	bufferSizeBeforeMinify: ${bufferSizeBeforeMinify},
-	       	// 	bufferSizeAfterMinify: ${bufferSizeAfterMinify}
-	       	// `);
+	       	self.logger.debug(`
+	       		imagePath: ${imagePath},
+	       		bufferSizeBeforeMinify: ${bufferSizeBeforeMinify},
+	       		bufferSizeAfterMinify: ${bufferSizeAfterMinify}
+	       	`);
 
 		    fs.writeFileSync(imagePath, buffer);
 		} catch (error) {
