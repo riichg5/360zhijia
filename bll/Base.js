@@ -237,34 +237,34 @@ class Base {
 			`);
 
 			//minify image
-			buffer = await imagemin.buffer(buffer, {
-				plugins: [
-	            	imageminMozjpeg({
-	            		quality: 45
-	            	}),
-	            	imageminPngquant({
-	            		quality: [0.3, 0.4]
-	            	}),
-	            	// imageminOptipng({
-	            	// 	optimizationLevel: 4
-	            	// }),
-	            	imageminGifsicle({
-	            		optimizationLevel: 2,
-	            		colors: 200
-	            	}),
-	            	imageminWebp({
-	            		quality: 45
-	            	})
-	        	]
-	       	});
+			// buffer = await imagemin.buffer(buffer, {
+			// 	plugins: [
+	  //           	imageminMozjpeg({
+	  //           		quality: 45
+	  //           	}),
+	  //           	imageminPngquant({
+	  //           		quality: [0.3, 0.4]
+	  //           	}),
+	  //           	// imageminOptipng({
+	  //           	// 	optimizationLevel: 4
+	  //           	// }),
+	  //           	imageminGifsicle({
+	  //           		optimizationLevel: 2,
+	  //           		colors: 200
+	  //           	}),
+	  //           	imageminWebp({
+	  //           		quality: 45
+	  //           	})
+	  //       	]
+	  //      	});
 
 	       	bufferSizeAfterMinify = buffer.length;
 
-	       	self.logger.debug(`
-	       		imagePath: ${imagePath},
-	       		bufferSizeBeforeMinify: ${bufferSizeBeforeMinify},
-	       		bufferSizeAfterMinify: ${bufferSizeAfterMinify}
-	       	`);
+	       	// self.logger.debug(`
+	       	// 	imagePath: ${imagePath},
+	       	// 	bufferSizeBeforeMinify: ${bufferSizeBeforeMinify},
+	       	// 	bufferSizeAfterMinify: ${bufferSizeAfterMinify}
+	       	// `);
 
 		    fs.writeFileSync(imagePath, buffer);
 		} catch (error) {
