@@ -1,5 +1,9 @@
 /*
 	此脚本用于压缩目录中的图片使用，使用前，请将图片目录先做备份
+	使用方法：
+		node imageMin.js 图片目录
+	比如：
+		node scripts/imageMin.js /Users/libo/截图
 */
 
 const fs = require('fs');
@@ -10,7 +14,7 @@ const imageminMozjpeg = require('imagemin-mozjpeg');
 const imageminPngquant = require('imagemin-pngquant');
 const imageminGifsicle = require('imagemin-gifsicle');
 
-const DIRECTORY = "/Users/libo/截图";
+// const DIRECTORY = "/Users/libo/截图";
 let processedAmount = 0;
 let failedAmount = 0;
 
@@ -64,7 +68,14 @@ async function procFiles(directory) {
 }
 
 async function main () {
-	await procFiles(DIRECTORY);
+	let DIRECTORY = process.argv[2];
+	// await procFiles(DIRECTORY);
+	if(DIRECTORY) {
+		console.log(`需要压缩图片的目录为：${DIRECTORY}`);
+		await procFiles(DIRECTORY);
+	} else {
+		console.log(`找不到执行参数。`);
+	}
 }
 
 main().then(() => {
