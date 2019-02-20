@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const fileType = require('file-type');
+const _utils = require('../lib/utils');
 const imagemin = require('imagemin');
 const imageminMozjpeg = require('imagemin-mozjpeg');
 const imageminPngquant = require('imagemin-pngquant');
@@ -58,6 +58,8 @@ async function procFiles(directory) {
 			       	fs.writeFileSync(fullPath, buffer);
 			       	++processedAmount;
 			       	console.log(`succeed! (${processedAmount}/${failedAmount}), ${originBufferSize}->${minBufferSize}, filename: ${fullPath}`);
+
+			       	await _utils.sleep(500);
 			    }
 	        }
     	} catch (error) {
