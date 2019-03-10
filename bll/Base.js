@@ -548,7 +548,8 @@ class Base {
 
 		return [
 			`http://45.192.167.10:3002/${categoryName}/${postId}.html`,
-			`http://45.192.160.159:3002/${categoryName}/${postId}.html`
+			`http://45.192.160.159:3002/${categoryName}/${postId}.html`,
+			`http://154.223.141.247:3002/${categoryName}/${postId}.html`,
 		];
 	}
 
@@ -624,6 +625,7 @@ class Base {
 	        yield [
 	        	self.requestPageUrl({url: proxyServersPageUrls[0]}),
 	        	self.requestPageUrl({url: proxyServersPageUrls[1]}),
+	        	self.requestPageUrl({url: proxyServersPageUrls[2]}),
 	        	bPush.pushToAll({uri: pageUrl}),
 	        ];
 		});
