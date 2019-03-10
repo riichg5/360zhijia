@@ -17,7 +17,7 @@ class QQ extends Base {
         this.name = config.name;
         this.img = config.img;
         this.uri = config.uri;
-        this.originUrl = new url(config.uri).origin;
+        this.originUrl = new URL(config.uri).origin;
         this.needReply = config.needReply;
         this.priority = config.priority;
         this.cron = config.cron;
