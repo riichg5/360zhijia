@@ -9,7 +9,7 @@
 [三驴之家](https://www.360zhijia.com)文章数量超过30万，日IP过万，各大搜索引擎爬虫很活跃。[WordPress](https://wordpress.org/)为基础的网站架构，依靠url伪静态 + Mysql已经不能满足如此活跃访问，所以又使用Node开发了一套反向代理机制的网站静态化中间件项目[wp-static](https://github.com/riichg5/wp-static)。
 
 网站架构如下：
-
+![三驴之家网站架构](./images/三驴之家架构.jpg)
 
 ## 开发备注
 
