@@ -7,8 +7,15 @@
 由于之前图片下载逻辑没有处理图片压缩，导致一些抓取下来的图片大小过大，影响页面加载速度并且极大浪费服务器带宽，所以在新增了抓取图片压缩存放后，增加了以下脚本处理服务器上面以前的历史图片。
 脚本存放于`scripts/imageMin.js`
 
+
+在后台运行处理脚本：
 ```bash
 nohup bash -c "node scripts/imageMin.js /mnt/data/www/360zhijia/wp-content/uploads/2016 >> ~/minimage_2015.log 2>&1 &"
+```
+
+直接处理：
+```bash
+node scripts/imageMin.js 图片目录
 ```
 
 ## 清理测试数据
